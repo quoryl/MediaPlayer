@@ -46,21 +46,21 @@ protected:
     wxMenu* About;
     wxMenu* Quit;
 
-    // Virtual event handlers, overide them in your derived class
-    virtual void onSearch( wxCommandEvent& event ) {  }
-    virtual void onAdd( wxCommandEvent& event ) {  }
-    virtual void onDelete( wxCommandEvent& event ) {  }
-    virtual void onRandom( wxCommandEvent& event ) {  }
-    virtual void onPrevious( wxCommandEvent& event ) {  }
-    virtual void onPlay( wxCommandEvent& event ) {  }
-    virtual void onNext( wxCommandEvent& event ) {  }
-    virtual void onRepeat( wxCommandEvent& event ) {  }
-    virtual void volumeChanged( wxScrollEvent& event ) {  }
-    virtual void onVolumeTrack( wxScrollEvent& event ) {  }
-    virtual void wxEVT_Menu( wxCommandEvent& event ) {  }
-private:
-   // MediaController* mediaController;
-   // Song* song;
+
+    void onSearch( wxCommandEvent& event );
+    void onAdd( wxCommandEvent& event );
+    void onDelete( wxCommandEvent& event );
+    void onShuffle(wxCommandEvent &event);
+    void onPrevious( wxCommandEvent& event );
+    void onPlay( wxCommandEvent& event );
+    void onNext( wxCommandEvent& event ) ;
+    void onRepeat( wxCommandEvent& event ) ;
+    void onScrollTrack(wxScrollEvent &event) ;
+    void onScrollChanged(wxScrollEvent &event) ;
+    void onMenuItem( wxCommandEvent& event );
+
+    MediaController* mediaController;
+    Song* song;
 
 
 

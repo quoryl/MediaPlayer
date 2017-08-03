@@ -4,17 +4,20 @@
 
 #include "MainFrame.h"
 
+void MainFrame::update() {
+
+}
 
 MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size,
                      long style) : Observer(parent, id, title, pos, size, style )
 {
 
 
-   //song = s;
+    song=new Song;
 
-   //mediaController = c;
-   //song->registerObserver(this);
+    song->registerObserver(this);
 
+    mediaController=new MediaController(song);
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -139,37 +142,83 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     searchBar->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
     addFile->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onAdd ), nullptr, this );
     deleteFromPlaylist->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onDelete ), nullptr, this );
-    shuffle->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRandom ), nullptr, this );
+    shuffle->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onShuffle), nullptr, this);
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Repeat->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ),nullptr, this );
-    Volume->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MainFrame::volumeChanged ), nullptr, this );
-    Volume->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( MainFrame::onVolumeTrack ), nullptr, this );
-    this->Connect( aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::wxEVT_Menu ) );
-    this->Connect( quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::wxEVT_Menu ) );
+    Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
+    Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
+    this->Connect( aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
+    this->Connect( quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
 }
 
 MainFrame::~MainFrame()
 {
-    //song->removeObserver(this);
+    song->removeObserver(this);
+    delete song;
+    delete mediaController;
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
     addFile->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onAdd ), nullptr, this );
     deleteFromPlaylist->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onDelete ), nullptr, this );
-    shuffle->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRandom ), nullptr, this );
+    shuffle->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onShuffle), nullptr, this);
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Repeat->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ), nullptr, this );
-    Volume->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( MainFrame::volumeChanged ), nullptr, this );
-    Volume->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( MainFrame::onVolumeTrack ), nullptr, this );
-    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::wxEVT_Menu ) );
-    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::wxEVT_Menu ) );
+    Volume->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
+    Volume->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
+    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
+    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
 
 }
 
-void MainFrame::update() {
-
+void MainFrame::onSearch(wxCommandEvent &event) {
+    mediaController->Search();
 }
+
+void MainFrame::onAdd(wxCommandEvent &event) {
+    mediaController->Add();
+}
+
+void MainFrame::onShuffle(wxCommandEvent &event) {
+    mediaController->Shuffle();
+}
+
+void MainFrame::onDelete(wxCommandEvent &event) {
+    mediaController->Delete();
+}
+
+void MainFrame::onPrevious(wxCommandEvent &event) {
+    mediaController->Previous();
+}
+
+void MainFrame::onPlay(wxCommandEvent &event) {
+    mediaController->Play();
+}
+
+void MainFrame::onNext(wxCommandEvent &event) {
+    mediaController->Next();
+}
+
+void MainFrame::onRepeat(wxCommandEvent &event) {
+    mediaController->Repeat();
+}
+
+void MainFrame::onScrollTrack(wxScrollEvent &event) {
+    mediaController->showVolume();
+}
+
+void MainFrame::onScrollChanged(wxScrollEvent &event) {
+    mediaController->changeVolume();
+}
+
+void MainFrame::onMenuItem(wxCommandEvent &event) {
+    mediaController->executeMenuItem();
+}
+
+
+
+
 
