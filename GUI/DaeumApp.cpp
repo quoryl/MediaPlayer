@@ -10,7 +10,7 @@ wxIMPLEMENT_APP(DaeumApp);
 
 bool DaeumApp::OnInit() {
 
-    unique_ptr<MainFrame> mainFrame(new MainFrame(nullptr, wxID_ANY, wxT("Some Title")));
+    MainFrame* mainFrame = new MainFrame(nullptr, wxID_ANY, wxT("DaeumApp"), wxDefaultPosition,wxSize(900, 400) );
     mainFrame->Show(true);
     return true;
 }

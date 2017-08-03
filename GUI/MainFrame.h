@@ -15,48 +15,52 @@
 
 using namespace std;
 
-class MainFrame : public FrameInterface{
+class MainFrame : public FrameInterface {
 public:
-    void update() override;
+    void update();
 
+    explicit MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY,
+    const wxString& title = wxEmptyString,
+    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ),
+    long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
-    MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-
-    ~MainFrame();
-
-
+    virtual ~MainFrame();
 protected:
-        unique_ptr<wxSearchCtrl> searchBar;
-        unique_ptr<wxStaticText> addText;
-        unique_ptr<wxFilePickerCtrl> loadFile;
-        unique_ptr<wxButton> addFile;
-        unique_ptr<wxButton> deleteFromPlaylist;
-        unique_ptr<wxButton> shuffle;
-        unique_ptr<wxListCtrl> songList;
-        unique_ptr<wxMediaCtrl> mediaCtrl;
-        unique_ptr<wxGauge> progressBar;
-        unique_ptr<wxButton> previous;
-        unique_ptr<wxButton> play;
-        unique_ptr<wxButton> next;
-        unique_ptr<wxButton> repeat;
-        unique_ptr<wxStaticText> volumeLabel;
-        unique_ptr<wxSlider> volume;
-        unique_ptr<wxMenuBar> menuBar;
-        unique_ptr<wxMenu> About;
-        unique_ptr<wxMenu> Quit;
+    wxSearchCtrl* searchBar;
+    wxStaticText* addText;
+    wxFilePickerCtrl* loadFile;
+    wxButton* addFile;
+    wxButton* deleteFromPlaylist;
+    wxButton* shuffle;
+    wxListCtrl* SongList;
+    wxMediaCtrl* mediaCtrl;
+    wxGauge* progressBar;
+    wxButton* Previous;
+    wxButton* Play;
+    wxButton* Next;
+    wxButton* Repeat;
+    wxStaticText* volumeLabel;
+    wxSlider* Volume;
+    wxMenuBar* menuBar;
+    wxMenu* About;
+    wxMenu* Quit;
+
+    // Virtual event handlers, overide them in your derived class
+    virtual void onSearch( wxCommandEvent& event ) {  }
+    virtual void onAdd( wxCommandEvent& event ) {  }
+    virtual void onDelete( wxCommandEvent& event ) {  }
+    virtual void onRandom( wxCommandEvent& event ) {  }
+    virtual void onPrevious( wxCommandEvent& event ) {  }
+    virtual void onPlay( wxCommandEvent& event ) {  }
+    virtual void onNext( wxCommandEvent& event ) {  }
+    virtual void onRepeat( wxCommandEvent& event ) {  }
+    virtual void volumeChanged( wxScrollEvent& event ) {  }
+    virtual void onVolumeTrack( wxScrollEvent& event ) {  }
+    virtual void wxEVT_Menu( wxCommandEvent& event ) {  }
 
 
-        void onSearch( wxCommandEvent& event ) ;
-        void onAdd( wxCommandEvent& event ) ;
-        void onDelete( wxCommandEvent& event ) ;
-        void onRandom( wxCommandEvent& event ) ;
-        void onPrevious( wxCommandEvent& event ) ;
-        void onPlay( wxCommandEvent& event ) ;
-        void onNext( wxCommandEvent& event ) ;
-        void onRepeat( wxCommandEvent& event ) ;
-        void volumeChanged( wxScrollEvent& event ) ;
-        void onVolumeTrack( wxScrollEvent& event ) ;
-        void wxEVT_Menu( wxCommandEvent& event ) ;
+
+
 
 };
 #endif //DAEUM_MAINFRAME_H
