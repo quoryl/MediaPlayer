@@ -10,19 +10,20 @@
 #include <wx/srchctrl.h>
 #include <wx/listctrl.h>
 #include <wx/mediactrl.h>
+
 #include "wx/wx.h"
-#include "FrameInterface.h"
+#include "Observer.h"
+#include "../Model/Song.h"
+#include "../Controller/MediaController.h"
+
 
 using namespace std;
 
-class MainFrame : public FrameInterface {
+class MainFrame : public Observer {
 public:
     void update();
 
-    explicit MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY,
-    const wxString& title = wxEmptyString,
-    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ),
-    long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+    explicit MainFrame(wxWindow *parent,  wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
     virtual ~MainFrame();
 protected:
@@ -57,7 +58,9 @@ protected:
     virtual void volumeChanged( wxScrollEvent& event ) {  }
     virtual void onVolumeTrack( wxScrollEvent& event ) {  }
     virtual void wxEVT_Menu( wxCommandEvent& event ) {  }
-
+private:
+   // MediaController* mediaController;
+   // Song* song;
 
 
 

@@ -5,8 +5,16 @@
 #include "MainFrame.h"
 
 
-MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : FrameInterface( parent, id, title, pos, size, style )
+MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size,
+                     long style) : Observer(parent, id, title, pos, size, style )
 {
+
+
+   //song = s;
+
+   //mediaController = c;
+   //song->registerObserver(this);
+
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -144,6 +152,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 MainFrame::~MainFrame()
 {
+    //song->removeObserver(this);
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
     addFile->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onAdd ), nullptr, this );
