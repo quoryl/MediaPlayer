@@ -6,20 +6,39 @@
 #define DAEUM_SONG_H
 
 #include "wx/wx.h"
-#include "SubjectInterface.h"
+#include "Subject.h"
+#include <list>
+using namespace std;
 
-
-class Song : public SubjectInterface{
-public:
+class Song : public Subject{
+private:
     int length;
+public:
+    int getLength() const;
+
+    void setLength(int length);
+
+    const wxString &getTitle() const;
+
+    void setTitle(const wxString &title);
+
+    const wxString &getArtist() const;
+
+    void setArtist(const wxString &artist);
+
+    const wxString &getAlbum() const;
+
+    void setAlbum(const wxString &album);
+
+    void notifyObserver() const override;
+    void registerObserver(Observer* o) override;
+    void removeObserver(Observer* o) override;
+
+private:
     wxString title;
     wxString artist;
     wxString album;
-
-
-    virtual void notifyObserver() const override;
-    virtual void registerObserver(MainFrame& mainFrame) override;
-    virtual void removeObserver(MainFrame& mainFrame) override;
+    list<Observer*> observers;
 
 };
 

@@ -6,13 +6,13 @@
 #define DAEUM_PLAYLIST_H
 
 #include "wx/wx.h"
-#include "SubjectInterface.h"
+#include "Subject.h"
 #include "Song.h"
 #include <map>
 
 using namespace std;
 
-class Playlist: public SubjectInterface {
+class Playlist: public Subject {
 public:
 
     wxString title;
