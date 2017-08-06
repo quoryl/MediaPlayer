@@ -14,6 +14,9 @@ class Song : public Subject{
 private:
     int length;
 public:
+
+    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0);
+
     int getLength() const;
 
     void setLength(int length);

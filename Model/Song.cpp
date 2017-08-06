@@ -4,6 +4,8 @@
 
 #include "Song.h"
 
+Song::Song(wxString title, wxString artist, wxString album, int duration):title(title),
+         artist(artist), album(album), length(duration){}
 
 int Song::getLength() const {
     return length;
