@@ -6,9 +6,17 @@
 #define DAEUM_MEDIATIMER_H
 
 #include "wx/wx.h"
-
+#include "MainFrame.h"
+class MainFrame;
 class MediaTimer : public wxTimer {
+public:
 
+    MediaTimer(MainFrame* frame) {m_frame = frame;}
+
+    // Called each time the timer's timeout expires
+    void Notify() override;
+
+    MainFrame* m_frame;
 };
 
 

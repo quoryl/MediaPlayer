@@ -12,8 +12,8 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
                      long style) : Observer(parent, id, title, pos, size, style )
 {
 
-
-    song=new Song;
+//FIXME: Don't do this here. Pass the objects as parameters
+    song=new Song(wxT("Sample"));
 
     song->registerObserver(this);
 
@@ -21,11 +21,14 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+
     wxBoxSizer* MainSizer;
     MainSizer = new wxBoxSizer( wxVERTICAL );
 
     wxBoxSizer* cmdSubSizer;
     cmdSubSizer = new wxBoxSizer( wxHORIZONTAL );
+
+    ////////// SearchBar///////////
 
     searchBar = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,30 ), 0 );
 #ifndef __WXMAC__
@@ -34,18 +37,27 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     searchBar->ShowCancelButton( true );
     cmdSubSizer->Add( searchBar, 0, wxALL, 5 );
 
+    //////////FilePicker//////////
+
     addText = new wxStaticText( this, wxID_ANY, wxT("Add song from: "), wxDefaultPosition, wxDefaultSize, 0 );
     addText->Wrap( -1 );
     cmdSubSizer->Add( addText, 0, wxALL, 5 );
 
-    loadFile = new wxFilePickerCtrl( this, wxID_ANY, wxT("/home/azrael/Pictures/Webp.net-resizeimage-_1_.bmp"), wxT("Select a file"), wxT("*.*"), wxDefaultPosition, wxSize( 200,-1 ), wxFLP_DEFAULT_STYLE );
+    loadFile = new wxFilePickerCtrl( this, wxID_ANY, wxT("*.*"), wxT("Select a file"), wxT("*.*"), wxDefaultPosition, wxSize( 200,-1 ), wxFLP_DEFAULT_STYLE );
+
     cmdSubSizer->Add( loadFile, 0, wxALL, 5 );
+
 
     addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxDefaultSize, 0 );
     cmdSubSizer->Add( addFile, 0, wxALL, 5 );
 
+    /////////DeleteItem/////////
+
     deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete Selected"), wxDefaultPosition, wxDefaultSize, 0 );
     cmdSubSizer->Add( deleteFromPlaylist, 0, wxALL, 5 );
+
+
+    ////////Shuffle/////////
 
     shuffle = new wxButton( this, wxID_ANY, wxT("Play random"), wxDefaultPosition, wxDefaultSize, 0 );
     shuffle->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
@@ -61,24 +73,40 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 
     MainSizer->Add( cmdSubSizer, 0, wxALL, 5 );
 
-    SongList = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    MainSizer->Add( SongList, 1, wxALL|wxEXPAND, 5 );
+    //////////ListCtrl//////////
+
+    songList = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+    songList->InsertColumn(0,wxT("#"),wxLIST_FORMAT_LEFT, 25);
+    songList->InsertColumn(1,wxT("Title"), wxLIST_FORMAT_LEFT, 250);
+    songList->InsertColumn(2,wxT("Artist"), wxLIST_FORMAT_LEFT, 150);
+    songList->InsertColumn(3,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
+
+    MainSizer->Add( songList, 1, wxALL|wxEXPAND, 5 );
+
+    /////////MediaCtrl/////////
 
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
     mediaCtrl->SetPlaybackRate(1);
     mediaCtrl->SetVolume(1);
+    mediaCtrl->ShowPlayerControls();
 
     mediaCtrl->Stop();
     MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
 
-    progressBar = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1,8 ), wxGA_HORIZONTAL|wxGA_SMOOTH );
-    progressBar->SetValue( 0 );
-    progressBar->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+    //////////Gauge//////////
+    mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
 
-    MainSizer->Add( progressBar, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
+
+    MainSizer->Add(mediaSlider, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
+
+
 
     wxBoxSizer* controlSubSizer;
     controlSubSizer = new wxBoxSizer( wxHORIZONTAL );
+
+    /////////Controls////////
+    mediaTimer = new MediaTimer(this);
+    mediaTimer->Start(500);
 
     Previous = new wxButton( this, wxID_ANY, wxT("<<"), wxDefaultPosition, wxSize( 30,30 ), 0 );
     Previous->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
@@ -101,6 +129,7 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     controlSubSizer->Add( Repeat, 0, 0, 5 );
 
 
+
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
 
     volumeLabel = new wxStaticText( this, wxID_ANY, wxT("Volume: "), wxDefaultPosition, wxDefaultSize, 0 );
@@ -118,6 +147,14 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 
     this->SetSizer( MainSizer );
     this->Layout();
+
+    statusBar = new wxStatusBar(this);
+    int widths[3] = {200, 60, 60};
+    statusBar -> SetFieldsCount(3, widths);
+    statusBar -> SetStatusText(wxT("Title here"), 0);
+    this->SetStatusBar(statusBar);
+    /////////Menu//////////
+
     menuBar = new wxMenuBar( 0 );
     About = new wxMenu();
     wxMenuItem* aboutItem;
@@ -149,8 +186,10 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     Repeat->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ),nullptr, this );
     Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
-    this->Connect( aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
-    this->Connect( quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
+    this->Connect(aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
+    this->Connect(quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
+
+
 }
 
 MainFrame::~MainFrame()
@@ -158,6 +197,7 @@ MainFrame::~MainFrame()
     song->removeObserver(this);
     delete song;
     delete mediaController;
+    mediaTimer -> Stop();
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
     addFile->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onAdd ), nullptr, this );
@@ -169,8 +209,8 @@ MainFrame::~MainFrame()
     Repeat->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ), nullptr, this );
     Volume->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
-    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
-    this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrame::onMenuItem ) );
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
 
 }
 
@@ -179,7 +219,7 @@ void MainFrame::onSearch(wxCommandEvent &event) {
 }
 
 void MainFrame::onAdd(wxCommandEvent &event) {
-    mediaController->Add();
+    mediaController->AddFile(loadFile, songList, mediaCtrl);
 }
 
 void MainFrame::onShuffle(wxCommandEvent &event) {
@@ -214,10 +254,20 @@ void MainFrame::onScrollChanged(wxScrollEvent &event) {
     mediaController->changeVolume();
 }
 
-void MainFrame::onMenuItem(wxCommandEvent &event) {
-    mediaController->executeMenuItem();
+void MainFrame::onAbout(wxCommandEvent &event) {
+    mediaController->showAbout();
+}
+void MainFrame::onQuit(wxCommandEvent &event){
+    Close();
+}
+void MainFrame::onBeginSeek(wxScrollEvent& event)
+{
+    IsBeingDragged = true;
 }
 
+void MainFrame::onEndSeek(wxScrollEvent &event) {
+    IsBeingDragged = false;
+}
 
 
 
