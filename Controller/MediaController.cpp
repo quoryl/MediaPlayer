@@ -17,9 +17,16 @@ void MediaController::AddFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wx
 
     auto path = filePicker->GetPath();
 
-    if( !mediaController->Load(path))
-        wxMessageBox(wxT("Couldn't load file!"));
-    else {
+    //we need a const char* for FileName constructor so we need cast path(wxString)
+    const char* charPath = (path.mbc_str());
+    TagLib::FileRef TagMain{TagLib::FileName(charPath)};
+
+    if(!TagMain.isNull() && TagMain.tag()) {
+
+        TagLib::Tag *tag = TagMain.tag();
+        wstring _tagTitle = (tag->title()).toWString();
+        wxString tagTitle(_tagTitle);
+//FIXME ^
 
         wxListItem listItem;
         listItem.SetAlign(wxLIST_FORMAT_LEFT);
@@ -31,13 +38,16 @@ void MediaController::AddFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wx
         listItem.SetState(wxLIST_STATE_SELECTED);
         listItem.SetData(new wxString(path));
 
+        //cast an int to a wxString
+
         wxString s;
         s << nID;
 
 
         list->InsertItem(listItem);
         list->SetItem(nID, 0, s);
-        list->SetItem(nID, 1, wxFileName(path).GetName());
+        //list->SetItem(nID, 1, wxFileName(path).GetName());
+        list->SetItem(nID, 1, tagTitle);
         list->SetItem(nID, 2, wxT("Unknown"));
         list->SetItem(nID, 3, wxT("Unknown"));
 

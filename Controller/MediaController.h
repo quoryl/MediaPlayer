@@ -8,6 +8,8 @@
 
 #include <wx/filepicker.h>
 #include <wx/listctrl.h>
+#include <taglib/fileref.h>
+
 #include "ControllerInterface.h"
 #include "../Model/Song.h"
 #include "../GUI/MainFrame.h"
