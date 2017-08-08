@@ -11,8 +11,7 @@
 using namespace std;
 
 class Song : public Subject{
-private:
-    int length;
+
 public:
 
     Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0);
@@ -33,16 +32,21 @@ public:
 
     void setAlbum(const wxString &album);
 
+    void setLoop(bool loop);
+
+    bool isLoop() const;
+
     void notifyObserver() const override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
 
 private:
+    int length;
     wxString title;
     wxString artist;
     wxString album;
+    bool loop;
     list<Observer*> observers;
-
 };
 
 

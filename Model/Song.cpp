@@ -53,3 +53,11 @@ void Song::removeObserver(Observer* o) {
     observers.remove(o);
 
 }
+
+bool Song::isLoop() const {
+    return loop;
+}
+
+void Song::setLoop(bool loop) {
+    Song::loop = loop;
+}
