@@ -10,20 +10,23 @@
 #include "wx/wx.h"
 #include <wx/listctrl.h>
 #include <wx/mediactrl.h>
+#include <map>
 
 class ControllerInterface {
 public:
-    virtual void Search() = 0;
-    virtual void AddFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *m) = 0;
-    virtual void Delete() = 0;
-    virtual void Shuffle() = 0;
-    virtual void Previous() = 0;
-    virtual void Play() = 0;
-    virtual void Next() = 0;
-    virtual void Repeat() = 0;
+    virtual void searchItem() = 0;
+    virtual void addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *m) = 0;
+    virtual void deleteSong() = 0;
+    virtual void shuffleList() = 0;
+    virtual void prevSong() = 0;
+    virtual void playSong() = 0;
+    virtual void nextSong() = 0;
+    virtual void loop(wxMediaCtrl* mediaControl) = 0;
     virtual void showVolume() = 0;
     virtual void changeVolume() = 0;
     virtual void showAbout() = 0;
+
+    virtual std::map<wxString, wxString> getMetadata(wxFilePickerCtrl *filePicker) = 0;
 
 
 };
