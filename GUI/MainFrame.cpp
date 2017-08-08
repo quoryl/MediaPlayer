@@ -53,13 +53,13 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 
     /////////DeleteItem/////////
 
-    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete Selected"), wxDefaultPosition, wxDefaultSize, 0 );
+    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
     cmdSubSizer->Add( deleteFromPlaylist, 0, wxALL, 5 );
 
 
     ////////Shuffle/////////
 
-    shuffle = new wxButton( this, wxID_ANY, wxT("Play random"), wxDefaultPosition, wxDefaultSize, 0 );
+    shuffle = new wxButton( this, wxID_ANY, wxT("Random"), wxDefaultPosition, wxDefaultSize, 0 );
     shuffle->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 
     cmdSubSizer->Add( shuffle, 0, wxALL, 5 );
@@ -86,14 +86,12 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     /////////MediaCtrl/////////
 
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
-    mediaCtrl->SetPlaybackRate(1);
-    mediaCtrl->SetVolume(1);
-    mediaCtrl->ShowPlayerControls();
-
-    mediaCtrl->Stop();
+    //mediaCtrl->SetPlaybackRate(1);
+    //mediaCtrl->SetVolume(1);
+    //mediaCtrl->Stop();
     MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
 
-    //////////Gauge//////////
+    //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
 
 
@@ -123,10 +121,10 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 
     controlSubSizer->Add( Next, 0, 0, 5 );
 
-    Repeat = new wxButton( this, wxID_ANY, wxT("O"), wxDefaultPosition, wxSize( 30,30 ), 0 );
-    Repeat->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+    Loop = new wxButton( this, wxID_ANY, wxT("O"), wxDefaultPosition, wxSize( 30,30 ), 0 );
+    Loop->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 
-    controlSubSizer->Add( Repeat, 0, 0, 5 );
+    controlSubSizer->Add( Loop, 0, 0, 5 );
 
 
 
@@ -183,9 +181,12 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
-    Repeat->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ),nullptr, this );
+
     Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
+    mediaCtrl->Connect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
+    mediaCtrl->Connect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onLoop), nullptr, this);
+    songList->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Connect(aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Connect(quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
 
@@ -206,44 +207,47 @@ MainFrame::~MainFrame()
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
-    Repeat->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onRepeat ), nullptr, this );
+
     Volume->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
+    mediaCtrl->Disconnect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
+    mediaCtrl->Disconnect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onLoop), nullptr, this);
+    songList->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
 
 }
 
 void MainFrame::onSearch(wxCommandEvent &event) {
-    mediaController->Search();
+    mediaController->searchItem();
 }
 
 void MainFrame::onAdd(wxCommandEvent &event) {
-    mediaController->AddFile(loadFile, songList, mediaCtrl);
+    mediaController->addFile(loadFile, songList, mediaCtrl);
 }
 
 void MainFrame::onShuffle(wxCommandEvent &event) {
-    mediaController->Shuffle();
+    mediaController->shuffleList();
 }
 
 void MainFrame::onDelete(wxCommandEvent &event) {
-    mediaController->Delete();
+    mediaController->deleteSong();
 }
 
 void MainFrame::onPrevious(wxCommandEvent &event) {
-    mediaController->Previous();
+    mediaController->prevSong();
 }
 
 void MainFrame::onPlay(wxCommandEvent &event) {
-    mediaController->Play();
+    mediaController->playSong();
 }
 
 void MainFrame::onNext(wxCommandEvent &event) {
-    mediaController->Next();
+    mediaController->nextSong();
 }
 
-void MainFrame::onRepeat(wxCommandEvent &event) {
-    mediaController->Repeat();
+void MainFrame::onLoop(wxMediaEvent& event){
+    mediaController -> loop(mediaCtrl);
 }
 
 void MainFrame::onScrollTrack(wxScrollEvent &event) {
@@ -268,6 +272,15 @@ void MainFrame::onBeginSeek(wxScrollEvent& event)
 void MainFrame::onEndSeek(wxScrollEvent &event) {
     IsBeingDragged = false;
 }
+
+void MainFrame::onLoaded(wxMediaEvent &event) {
+    mediaCtrl->Play();
+}
+
+void MainFrame::onListItemActivated(wxListEvent &event) {
+    mediaCtrl->Play();
+}
+
 
 
 

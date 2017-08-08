@@ -44,7 +44,7 @@ public:
     wxButton* Previous;
     wxButton* Play;
     wxButton* Next;
-    wxButton* Repeat;
+    wxButton* Loop;
     wxStaticText* volumeLabel;
     wxSlider* Volume;
     wxSlider* mediaSlider;
@@ -62,13 +62,16 @@ public:
     void onPrevious( wxCommandEvent& event );
     void onPlay( wxCommandEvent& event );
     void onNext( wxCommandEvent& event ) ;
-    void onRepeat( wxCommandEvent& event ) ;
+
     void onScrollTrack(wxScrollEvent &event) ;
-    void onScrollChanged(wxScrollEvent &event) ;
+    void onScrollChanged(wxScrollEvent &event);
     void onAbout(wxCommandEvent &event);
     void onQuit(wxCommandEvent& event);
     void onBeginSeek(wxScrollEvent& event);
     void onEndSeek(wxScrollEvent& event);
+    void onLoaded(wxMediaEvent& event);
+    void onListItemActivated(wxListEvent& event);
+    void onLoop(wxMediaEvent& event);
 
     MediaController* mediaController;
     Song* song;
