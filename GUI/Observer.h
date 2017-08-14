@@ -5,13 +5,14 @@
 #ifndef DAEUM_FRAMEINTERFACE_H
 #define DAEUM_FRAMEINTERFACE_H
 
+#include <list>
 #include "wx/wx.h"
 #include "../Controller/ControllerInterface.h"
+#include "../Model/Song.h"
 
-class Observer: public wxFrame {
+class Observer{
 public:
-    virtual void update()=0; //TODO
-    Observer( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) ;
+    virtual void update(std::__cxx11::list<Song *> &playList)=0;
 protected:
     ControllerInterface* ctrl;
 };
