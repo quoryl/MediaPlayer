@@ -6,21 +6,27 @@
 #define DAEUM_MEDIACONTROLLER_H
 
 #include <map>
-#include <wx/filepicker.h>
-#include <wx/listctrl.h>
+
+
+#include "wx/listctrl.h"
+#include "wx/wx.h"
 
 #include <taglib/apefile.h>
 #include <taglib/fileref.h>
+#include <wx/generic/listctrl.h>
+#include <wx/mediactrl.h>
+#include <wx/filepicker.h>
 
 #include "ControllerInterface.h"
 #include "../Model/Song.h"
 #include "../GUI/MainFrame.h"
-
+class MainFrame; // FIXME it's linked to the fixme below
 class MediaController: public ControllerInterface{
 
 public:
-    explicit MediaController( Song* s);
-    void searchItem() override ;
+    MediaController(Playlist* pList);
+
+    void searchItem(wxString text) override ;
     void addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *mediaControl) override ;
     void deleteSong() override ;
     void shuffleList() override ;
@@ -31,9 +37,11 @@ public:
     void changeVolume() override ;
     void showAbout() override ;
     void loop(wxMediaCtrl* mediaControl) override;
-    map<wxString, wxString> getMetadata(wxFilePickerCtrl *filePicker) override;
+    void setLoop();
+    map<wxString, wxString> getMetadata(wxFilePickerCtrl *picker) override;
 private:
-    Song* song;
+    Playlist* playlist;
+
 };
 
 

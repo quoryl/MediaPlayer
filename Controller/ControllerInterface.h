@@ -14,7 +14,7 @@
 
 class ControllerInterface {
 public:
-    virtual void searchItem() = 0;
+    virtual void searchItem(wxString text) = 0;
     virtual void addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *m) = 0;
     virtual void deleteSong() = 0;
     virtual void shuffleList() = 0;

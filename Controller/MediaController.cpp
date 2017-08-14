@@ -5,19 +5,25 @@
 
 
 #include "MediaController.h"
-#include "../Model/Song.h"
 
-MediaController::MediaController(Song *s) : song(s) {}
 
-void MediaController::searchItem() {
+MediaController::MediaController(Playlist* pList) : playlist(pList){
+
+}
+
+void MediaController::searchItem(wxString text) {
+
 
 }
 
 void MediaController::addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *mediaControl) {
 
     wxString path = filePicker->GetPath();
-    mediaControl -> Load(path);
-
+    auto fileName = filePicker -> GetFileName();
+    if(fileName.IsOk()) {
+        bool a = mediaControl -> Load(path);
+        std::cout << a;
+    }
         wxListItem listItem;
         listItem.SetAlign(wxLIST_FORMAT_LEFT);
 
@@ -37,17 +43,12 @@ void MediaController::addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wx
         list->InsertItem(listItem);
         list->SetItem(nID, 0, s);
         list->SetItem(nID, 1, wxFileName(path).GetName());
-        //list->SetItem(nID, 1, tagTitle);
         list->SetItem(nID, 2, wxT("Unknown"));
         list->SetItem(nID, 3, wxT("Unknown"));
 
-        if (nID % 2) {
-            listItem.SetBackgroundColour(wxColour(255, 235, 200));
-            list->SetItem(listItem);
-        }
-
 
 }
+
 
 void MediaController::deleteSong() {
 
@@ -85,14 +86,16 @@ void MediaController::showAbout() {
 
 
 
-map<wxString, wxString> MediaController::getMetadata(wxFilePickerCtrl *filePicker) {
-    //we need a const char* for FileName constructor so we need cast path(wxString)
-    /* using namespace TagLib;
-     wxString filePath = filePicker -> GetPath();
+map<wxString, wxString> MediaController::getMetadata(wxFilePickerCtrl *picker) {
+    /*//we need a const char* for FileName constructor so we need cast path(wxString)
+     using namespace TagLib;
+
+     wxString filePath = picker -> GetPath();
+
      const char* charPath = (filePath.mbc_str());
      FileRef TagMain{FileName(charPath)};
 
-     if(!TagMain.isNull() && TagMain.tag()) {
+    if(!TagMain.isNull() && TagMain.tag()) {
 
          TagLib::Tag *tag = TagMain.tag();
          wstring _tagTitle = (tag->title()).toWString();
@@ -108,10 +111,21 @@ map<wxString, wxString> MediaController::getMetadata(wxFilePickerCtrl *filePicke
          std::map<wxString,wxString> metadata = {{"title", tagTitle}, {"album", tagAlbum}, {"artist", tagArtist},{"genre", tagGenre}};
          return metadata;
 
-      }
+    }
 */
 }
 
 void MediaController::loop(wxMediaCtrl *mediaControl) {
+/*
+    if (song -> isLoop()){
+        mediaControl -> Play();
+    }
+*/
+}
 
+void MediaController::setLoop() {
+    //FIXME playlist is now the subject
+    /*
+    song -> setLoop( !song -> isLoop() );
+    std:: cout << song -> isLoop() << std::endl;*/
 }
