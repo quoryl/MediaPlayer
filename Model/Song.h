@@ -6,11 +6,10 @@
 #define DAEUM_SONG_H
 
 #include "wx/wx.h"
-#include "Subject.h"
-#include <list>
-using namespace std;
 
-class Song : public Subject{
+
+
+class Song {
 
 public:
 
@@ -20,15 +19,15 @@ public:
 
     void setLength(int length);
 
-    const wxString &getTitle() const;
+    const wxString getTitle() const;
 
     void setTitle(const wxString &title);
 
-    const wxString &getArtist() const;
+    const wxString getArtist() const;
 
     void setArtist(const wxString &artist);
 
-    const wxString &getAlbum() const;
+    const wxString getAlbum() const;
 
     void setAlbum(const wxString &album);
 
@@ -36,17 +35,14 @@ public:
 
     bool isLoop() const;
 
-    void notifyObserver() const override;
-    void registerObserver(Observer* o) override;
-    void removeObserver(Observer* o) override;
+
 
 private:
     int length;
     wxString title;
     wxString artist;
     wxString album;
-    bool loop;
-    list<Observer*> observers;
+    bool loop = false;
 };
 
 

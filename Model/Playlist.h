@@ -8,19 +8,24 @@
 #include "wx/wx.h"
 #include "Subject.h"
 #include "Song.h"
-#include <map>
+#include <list>
 
 using namespace std;
 
 class Playlist: public Subject {
 public:
+    bool addToPlaylist( Song* song);
+    void searchPlaylist(wxString filterText);
+    bool deleteFromPlaylist(Song* song);
 
-    wxString title;
-    int nSongs;
-    int length;
+    void notifyObserver() const override;
+    void registerObserver(Observer* o) override;
+    void removeObserver(Observer* o) override;
 
-    //Must be an aggregation  with song TODO
-    map<int, Song> mapPlaylist;
+    virtual ~Playlist();
+
+    list<Song*> playList;
+    list<Observer*> playListObservers;
 };
 
 
