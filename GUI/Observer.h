@@ -12,7 +12,7 @@
 
 class Observer{
 public:
-    virtual void update(std::__cxx11::list<Song *> &playList)=0;
+    virtual void update(std::__cxx11::list<Song *>& playList)=0;
 protected:
     ControllerInterface* ctrl;
 };

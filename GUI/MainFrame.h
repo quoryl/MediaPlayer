@@ -34,7 +34,7 @@ class MediaTimer;
 
 class MainFrame : public wxFrame, public Observer {
 public:
-    void update(list<Song *> &playList) override;
+    void update(list<Song*>& playList) override;
 
     bool IsBeingDragged;
 
@@ -48,17 +48,19 @@ public:
 
     wxSearchCtrl* searchBar;
     wxStaticText* addText;
-    wxFilePickerCtrl* loadFile;
+    wxFileDialog* loadFile;
     wxButton* addFile;
     wxButton* deleteFromPlaylist;
     wxButton* shuffle;
-    wxListCtrl* songList;
+    wxListView* songList;
     wxMediaCtrl* mediaCtrl;
     wxButton* Previous;
     wxButton* Play;
     wxButton* Next;
     wxButton* Loop;
-    wxStaticText* volumeLabel;
+    wxButton* prevSession;
+    wxButton* save;
+    wxButton* volumeButton;
     wxSlider* Volume;
     wxSlider* mediaSlider;
     wxMenuBar* menuBar;
@@ -66,16 +68,22 @@ public:
     wxMenu* Quit;
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
+    wxTimer searchTimer;
 
 
     void onSearch( wxCommandEvent& event );
+    void onTextUpdated(wxCommandEvent& event);
+    void onTextEnter(wxCommandEvent& event);
+    void onTimer(wxTimerEvent& event);
     void onAdd( wxCommandEvent& event );
-    void onDelete( wxCommandEvent& event );
+    void onDelete( wxCommandEvent& event);
     void onShuffle(wxCommandEvent &event);
     void onPrevious( wxCommandEvent& event );
     void onPlay( wxCommandEvent& event );
     void onNext( wxCommandEvent& event ) ;
     void setLoopFrame(wxCommandEvent& event);
+    void onPrevSession(wxCommandEvent& event);
+    void onSave(wxCommandEvent &event);
     void onScrollTrack(wxScrollEvent &event) ;
     void onScrollChanged(wxScrollEvent &event);
     void onAbout(wxCommandEvent &event);
@@ -83,8 +91,10 @@ public:
     void onBeginSeek(wxScrollEvent& event);
     void onEndSeek(wxScrollEvent& event);
     void onLoaded(wxMediaEvent& event);
-    void onListItemActivated(wxListEvent& event);
     void onLoop(wxMediaEvent& event);
+    void onListItemActivated(wxListEvent& event);
+    void onListItemSelected(wxListEvent& event);
+    void onKillFocus(wxFocusEvent& event);
 
     //controller
     MediaController* controller;

@@ -10,7 +10,6 @@ wxIMPLEMENT_APP(DaeumApp);
 
 
 bool DaeumApp::OnInit() {
-
     auto playlist = new Playlist;
     auto controller = new MediaController(playlist);
     MainFrame* mainFrame = new MainFrame(controller, playlist, nullptr, wxID_ANY,
