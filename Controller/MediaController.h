@@ -16,19 +16,23 @@
 #include <wx/generic/listctrl.h>
 #include <wx/mediactrl.h>
 #include <wx/filepicker.h>
+#include <wx/aboutdlg.h>
+
+#include <wx/txtstrm.h> //output and input stream. For saving the previous session
+#include <wx/wfstream.h>
 
 #include "ControllerInterface.h"
 #include "../Model/Song.h"
 #include "../GUI/MainFrame.h"
-class MainFrame; // FIXME it's linked to the fixme below
+
 class MediaController: public ControllerInterface{
 
 public:
-    MediaController(Playlist* pList);
+    explicit MediaController(Playlist* pList);
 
     void searchItem(wxString text) override ;
-    void addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *mediaControl) override ;
-    void deleteSong() override ;
+    void addFile(wxArrayString *paths, wxMediaCtrl *mediaControl = nullptr) override ;
+    void deleteSong(wxString toDeletePath) override ;
     void shuffleList() override ;
     void prevSong() override ;
     void playSong() override ;
@@ -38,7 +42,9 @@ public:
     void showAbout() override ;
     void loop(wxMediaCtrl* mediaControl) override;
     void setLoop();
-    map<wxString, wxString> getMetadata(wxFilePickerCtrl *picker) override;
+    void save() override;
+    void load() override;
+    map<wxString, wxString> getMetadata(wxFileDialog *picker) override;
 private:
     Playlist* playlist;
 

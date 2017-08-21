@@ -13,44 +13,60 @@ MediaController::MediaController(Playlist* pList) : playlist(pList){
 
 void MediaController::searchItem(wxString text) {
 
+    playlist -> searchPlaylist(text);
 
 }
 
-void MediaController::addFile(wxFilePickerCtrl *filePicker, wxListCtrl *list, wxMediaCtrl *mediaControl) {
+void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
 
-    wxString path = filePicker->GetPath();
-    auto fileName = filePicker -> GetFileName();
-    if(fileName.IsOk()) {
-        bool a = mediaControl -> Load(path);
-        std::cout << a;
+    for(auto i: *paths) {
+        auto tempList = playlist->getPlayList();
+        if(mediaControl!=nullptr)
+            mediaControl -> Load(i);
+
+/*
+    /////////////////////////////////////////////////
+    auto m = getMetadata(filePicker);
+    auto title = m.find(wxT("title")) -> second;
+    auto album = m.find(wxT("album")) -> second;
+    auto artist = m.find(wxT("artist")) -> second;
+*/
+
+        wxString name = wxFileName(i).GetName();
+        bool found = false;
+        if (tempList.empty()) {
+            Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
+            playlist->addToPlaylist(song); //to std::list
+        } else {
+            for (auto g : tempList) {
+                //this is temporary. The title is not enough. I should check something like title+artist when taglib will work
+                if ((g->getTitle()) == (name)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+                playlist->addToPlaylist(song); //to std::list
+            }
+
+        }
     }
-        wxListItem listItem;
-        listItem.SetAlign(wxLIST_FORMAT_LEFT);
 
-        int nID;
-
-        listItem.SetId(nID = list->GetItemCount());
-        listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
-        listItem.SetState(wxLIST_STATE_SELECTED);
-        listItem.SetData(new wxString(path));
-
-        //cast an int to a wxString
-
-        wxString s;
-        s << nID;
+    /////////////////////////////////////////////////////
 
 
-        list->InsertItem(listItem);
-        list->SetItem(nID, 0, s);
-        list->SetItem(nID, 1, wxFileName(path).GetName());
-        list->SetItem(nID, 2, wxT("Unknown"));
-        list->SetItem(nID, 3, wxT("Unknown"));
 
 
 }
+void MediaController::deleteSong(wxString toDeletePath) {
 
-
-void MediaController::deleteSong() {
+    auto tempList = playlist -> getPlayList();
+    for(auto g : tempList){
+        if(g->getTitle().IsSameAs(toDeletePath)) {
+            playlist->deleteFromPlaylist(g);
+        }
+    }
+    wxMessageBox(wxT("Song/s Deleted!"));
 
 }
 
@@ -86,8 +102,8 @@ void MediaController::showAbout() {
 
 
 
-map<wxString, wxString> MediaController::getMetadata(wxFilePickerCtrl *picker) {
-    /*//we need a const char* for FileName constructor so we need cast path(wxString)
+map<wxString, wxString> MediaController::getMetadata(wxFileDialog *picker) {
+    //we need a const char* for FileName constructor so we need cast path(wxString)
      using namespace TagLib;
 
      wxString filePath = picker -> GetPath();
@@ -98,21 +114,21 @@ map<wxString, wxString> MediaController::getMetadata(wxFilePickerCtrl *picker) {
     if(!TagMain.isNull() && TagMain.tag()) {
 
          TagLib::Tag *tag = TagMain.tag();
+
          wstring _tagTitle = (tag->title()).toWString();
          wstring _tagAlbum = (tag->album()).toWString();
          wstring _tagArtist = (tag->artist()).toWString();
-         wstring _tagGenre = (tag->genre()).toWString();
+
 
          wxString tagTitle(_tagTitle);
          wxString tagAlbum(_tagAlbum);
          wxString tagArtist(_tagArtist);
-         wxString tagGenre(_tagGenre);
 
-         std::map<wxString,wxString> metadata = {{"title", tagTitle}, {"album", tagAlbum}, {"artist", tagArtist},{"genre", tagGenre}};
+         std::map<wxString,wxString> metadata = {{"title", tagTitle}, {"album", tagAlbum}, {"artist", tagArtist}};
          return metadata;
 
     }
-*/
+
 }
 
 void MediaController::loop(wxMediaCtrl *mediaControl) {
@@ -128,4 +144,40 @@ void MediaController::setLoop() {
     /*
     song -> setLoop( !song -> isLoop() );
     std:: cout << song -> isLoop() << std::endl;*/
+}
+void MediaController::save(){
+    wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
+    if(fileOStream.IsOk()) {
+        wxTextOutputStream textOStream(fileOStream);
+        auto tmp = playlist->getPlayList();
+        for(auto i:tmp) {
+            textOStream << i->getSongPath()<<"\n";
+        }
+        wxMessageBox(wxT("The content was saved !"));
+    }
+    else
+        wxMessageBox(wxT("Error : wxFileOutputStream object is not available"));
+}
+
+void MediaController::load() {
+
+    wxTextFile text(wxT("../savedSession.txt"));
+    if(text.Exists()) {
+        text.Open();
+        if (!text.GetFirstLine().IsSameAs(wxEmptyString)) {
+            wxArrayString tmp;
+            for (auto str = text.GetFirstLine(); !text.Eof(); str = text.GetNextLine()) {
+                tmp.Add(str);
+            }
+            if (text.Eof()) {
+                wxMessageBox(wxT("Loading completed! "));
+            }
+            text.Close();
+            addFile(&tmp);
+        } else
+            wxMessageBox(wxT("There is no saved data"));
+
+    }
+    else
+        wxMessageBox(wxT("File not found! "));
 }
