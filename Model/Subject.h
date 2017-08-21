@@ -9,7 +9,7 @@
 
 class Subject {
 public:
-    virtual void notifyObserver() const=0;
+    virtual void notifyObserver() =0;
     virtual void registerObserver(Observer* o)=0;
     virtual void removeObserver(Observer* o)=0;
 protected:

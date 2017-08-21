@@ -9,22 +9,28 @@
 #include "Subject.h"
 #include "Song.h"
 #include <list>
-
+#include <vector>
 using namespace std;
 
 class Playlist: public Subject {
 public:
     bool addToPlaylist( Song* song);
     void searchPlaylist(wxString filterText);
-    bool deleteFromPlaylist(Song* song);
+    void deleteFromPlaylist(Song* song);
 
-    void notifyObserver() const override;
+
+    void notifyObserver() override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
 
-    virtual ~Playlist();
+    const list<Song *> &getPlayList() const;
 
+    virtual ~Playlist();
+private:
     list<Song*> playList;
+
+    list<Song*> searchTempList; //used for searching
+
     list<Observer*> playListObservers;
 };
 

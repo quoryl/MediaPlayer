@@ -4,8 +4,8 @@
 
 #include "Song.h"
 
-Song::Song(wxString title, wxString artist, wxString album, int duration):title(title),
-         artist(artist), album(album), length(duration){}
+Song::Song( wxString title, wxString artist, wxString album, int duration, wxString sp):title(title),
+         artist(artist), album(album), length(duration), songPath(sp){}
 
 int Song::getLength() const {
     return length;
@@ -48,3 +48,12 @@ bool Song::isLoop() const {
 void Song::setLoop(bool loop) {
     Song::loop = loop;
 }
+
+const wxString Song::getSongPath(){
+    return songPath;
+}
+
+void Song::setSongPath(const wxString& sp){
+    songPath = sp;
+}
+

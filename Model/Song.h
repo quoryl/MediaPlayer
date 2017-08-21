@@ -13,7 +13,7 @@ class Song {
 
 public:
 
-    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0);
+    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString sp = wxEmptyString);
 
     int getLength() const;
 
@@ -35,6 +35,8 @@ public:
 
     bool isLoop() const;
 
+    const wxString getSongPath();
+    void setSongPath(const wxString& sp);
 
 
 private:
@@ -42,7 +44,9 @@ private:
     wxString title;
     wxString artist;
     wxString album;
+    wxString songPath;
     bool loop = false;
+
 };
 
 
