@@ -4,7 +4,7 @@
 
 #include <chrono>
 #include "MainFrame.h"
-#include "../Model/Playlist.h"
+
 
 void MainFrame::update(list<Song*>& playList){
     songList->DeleteAllItems();
@@ -37,7 +37,7 @@ void MainFrame::update(list<Song*>& playList){
 
 MainFrame::MainFrame(MediaController *mediaController,
                      Playlist *pList, wxWindow *parent, wxWindowID id,const wxString &title, const wxPoint &pos,
-                      const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
+                     const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
 {
 
     playlist = pList;
@@ -84,6 +84,24 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
     cmdSubSizer->Add( deleteFromPlaylist, 0, wxALL, 5 );
+
+    wxBitmap loadPNG;
+    loadPNG.LoadFile("../ControlsPNG/load.png", wxBITMAP_TYPE_PNG);
+
+    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(35,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    prevSession->SetBitmap(loadPNG);
+    prevSession->SetBackgroundColour(GetBackgroundColour());
+
+    cmdSubSizer->Add( prevSession, 0, 0, 5 );
+
+    wxBitmap savePNG;
+    savePNG.LoadFile("../ControlsPNG/save.png", wxBITMAP_TYPE_PNG);
+
+    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(35,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    save->SetBitmap(savePNG);
+    save->SetBackgroundColour(GetBackgroundColour());
+
+    cmdSubSizer->Add( save, 0, 0, 5 );
 
 
 
@@ -172,15 +190,8 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( shuffle, 0, 0, 5 );
 
-    prevSession = new wxButton( this, wxID_ANY, wxT("Load"), wxDefaultPosition, wxSize( 60,30 ), 0 );
-    prevSession->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    controlSubSizer->Add( prevSession, 0, 0, 5 );
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
-
-    save = new wxButton( this, wxID_ANY, wxT("Save"), wxDefaultPosition, wxSize( 60,30 ), 0 );
-    save->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    controlSubSizer->Add( save, 0, 0, 5 );
 
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
@@ -281,7 +292,7 @@ void MainFrame::onTextEnter(wxCommandEvent &event){
 }
 void MainFrame::onKillFocus(wxFocusEvent &event){
     if(searchTimer.IsRunning())
-    searchTimer.Stop();
+        searchTimer.Stop();
 }
 
 void MainFrame::onAdd(wxCommandEvent &event) {
