@@ -84,27 +84,35 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     loadFile = new wxFileDialog( this,wxT("Select a file"),wxT("/home/azrael/Music"),wxEmptyString, wxT("*.mp3"),wxFD_MULTIPLE|wxFD_OPEN);
 
-    addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxSize(205,-1), 0 );
+    //addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxSize(205,-1), 0 );
+    wxBitmap addPNG;
+    addPNG.LoadFile("../ControlsPNG/add_text.png", wxBITMAP_TYPE_PNG);
 
+    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    addFile->SetBitmap(addPNG);
+    addFile->SetBackgroundColour(GetBackgroundColour());
     /////////DeleteItem/////////
+    wxBitmap deletePNG;
+    deletePNG.LoadFile("../ControlsPNG/delete_text.png", wxBITMAP_TYPE_PNG);
 
-    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-
+    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    deleteFromPlaylist->SetBitmap(deletePNG);
+    deleteFromPlaylist->SetBackgroundColour(GetBackgroundColour());
     ////////Loads previous session(saved by the user)/////////
 
     wxBitmap loadPNG;
-    loadPNG.LoadFile("../ControlsPNG/load.png", wxBITMAP_TYPE_PNG);
+    loadPNG.LoadFile("../ControlsPNG/load_text.png", wxBITMAP_TYPE_PNG);
 
-    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(35,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     prevSession->SetBitmap(loadPNG);
     prevSession->SetBackgroundColour(GetBackgroundColour());
 
     ////////Saves session/////////
 
     wxBitmap savePNG;
-    savePNG.LoadFile("../ControlsPNG/save.png", wxBITMAP_TYPE_PNG);
+    savePNG.LoadFile("../ControlsPNG/save_text.png", wxBITMAP_TYPE_PNG);
 
-    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(35,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     save->SetBitmap(savePNG);
     save->SetBackgroundColour(GetBackgroundColour());
 
@@ -144,7 +152,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     //mediaCtrl->SetPlaybackRate(1);
     //mediaCtrl->SetVolume(1);
     //mediaCtrl->Stop();
-    MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
+    //MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
 
     //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
@@ -407,11 +415,12 @@ void MainFrame::onEndSeek(wxScrollEvent &event) {
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
+    wxMessageBox(wxT("Ready to play"));
 
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
-    mediaCtrl->Play();
+   // mediaCtrl->Play();
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
