@@ -18,6 +18,7 @@
 #include <wx/mediactrl.h>
 #include <wx/listbase.h>
 #include <wx/filepicker.h>
+#include <wx/collpane.h>
 
 
 #include "Observer.h"
@@ -69,6 +70,8 @@ public:
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
     wxTimer searchTimer;
+    wxCollapsiblePane* pane;
+
 
 
     void onSearch( wxCommandEvent& event );

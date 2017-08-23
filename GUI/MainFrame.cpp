@@ -4,7 +4,7 @@
 
 #include <chrono>
 #include "MainFrame.h"
-#include "../Model/Playlist.h"
+
 
 void MainFrame::update(list<Song*>& playList){
     songList->DeleteAllItems();
@@ -37,7 +37,7 @@ void MainFrame::update(list<Song*>& playList){
 
 MainFrame::MainFrame(MediaController *mediaController,
                      Playlist *pList, wxWindow *parent, wxWindowID id,const wxString &title, const wxPoint &pos,
-                      const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
+                     const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
 {
 
     playlist = pList;
@@ -66,32 +66,9 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     searchTimer.SetOwner(this, wxID_ANY);
 
-    //////////FilePicker//////////
-
-    addText = new wxStaticText( this, wxID_ANY, wxT("Add song : "), wxDefaultPosition, wxDefaultSize, 0 );
-    addText->Wrap( -1 );
-    cmdSubSizer->Add( addText, 0, wxALL, 5 );
-
-    loadFile = new wxFileDialog( this,wxT("Select a file"),wxT("/home/azrael/Music"),wxEmptyString, wxT("*.mp3"),wxFD_MULTIPLE|wxFD_OPEN);
-
-    cmdSubSizer->Add( loadFile, 0, wxALL, 5 );
-
-
-    addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxDefaultSize, 0 );
-    cmdSubSizer->Add( addFile, 0, wxALL, 5 );
-
-    /////////DeleteItem/////////
-
-    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-    cmdSubSizer->Add( deleteFromPlaylist, 0, wxALL, 5 );
-
-
-
     cmdSubSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-
     cmdSubSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
 
     MainSizer->Add( cmdSubSizer, 0, wxALL, 5 );
 
@@ -103,23 +80,85 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList->InsertColumn(2,wxT("Artist"), wxLIST_FORMAT_LEFT, 150);
     songList->InsertColumn(3,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
 
-    MainSizer->Add( songList, 1, wxALL|wxEXPAND, 5 );
+    //////////FileDialog//////////
+
+    loadFile = new wxFileDialog( this,wxT("Select a file"),wxT("/home/azrael/Music"),wxEmptyString, wxT("*.mp3"),wxFD_MULTIPLE|wxFD_OPEN);
+
+    //addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxSize(205,-1), 0 );
+    wxBitmap addPNG;
+    addPNG.LoadFile("../ControlsPNG/add_text.png", wxBITMAP_TYPE_PNG);
+
+    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    addFile->SetBitmap(addPNG);
+    addFile->SetBackgroundColour(GetBackgroundColour());
+    /////////DeleteItem/////////
+    wxBitmap deletePNG;
+    deletePNG.LoadFile("../ControlsPNG/delete_text.png", wxBITMAP_TYPE_PNG);
+
+    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    deleteFromPlaylist->SetBitmap(deletePNG);
+    deleteFromPlaylist->SetBackgroundColour(GetBackgroundColour());
+    ////////Loads previous session(saved by the user)/////////
+
+    wxBitmap loadPNG;
+    loadPNG.LoadFile("../ControlsPNG/load_text.png", wxBITMAP_TYPE_PNG);
+
+    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    prevSession->SetBitmap(loadPNG);
+    prevSession->SetBackgroundColour(GetBackgroundColour());
+
+    ////////Saves session/////////
+
+    wxBitmap savePNG;
+    savePNG.LoadFile("../ControlsPNG/save_text.png", wxBITMAP_TYPE_PNG);
+
+    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    save->SetBitmap(savePNG);
+    save->SetBackgroundColour(GetBackgroundColour());
+
+    //////////CollapsiblePane//////
+
+    auto paneSizer = new wxBoxSizer( wxHORIZONTAL );
+    pane = new wxCollapsiblePane(this,wxID_ANY, wxEmptyString ,wxDefaultPosition, wxSize(-1,-1));
+
+    auto paneButtonSz = new wxBoxSizer(wxVERTICAL);
+    paneButtonSz->Add(pane,0);
+
+    paneButtonSz->Add( addFile, 0, wxALIGN_LEFT|wxEXPAND, 5);
+    paneButtonSz->Add( deleteFromPlaylist, 0, wxALIGN_LEFT|wxEXPAND, 5 );
+    paneButtonSz->Add( save, 0, 0, 5);
+    paneButtonSz->Add( prevSession, 0, 0, 5);
+
+
+    paneSizer->Add(paneButtonSz, 0);
+    paneSizer->Add(songList, 1, wxEXPAND|wxRIGHT, 5);
+
+    wxWindow *win = pane->GetPane();
+    wxSizer *paneSz = new wxBoxSizer(wxVERTICAL);
+    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
+    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
+    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
+    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
+    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
+
+    win->SetSizer(paneSz);
+    paneSz->SetSizeHints(win);
+
+    MainSizer->Add( paneSizer, 1, wxEXPAND|wxLEFT, 5 );
 
     /////////MediaCtrl/////////
 
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
+    mediaCtrl->Enable();
     //mediaCtrl->SetPlaybackRate(1);
     //mediaCtrl->SetVolume(1);
     //mediaCtrl->Stop();
-    MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
+    //MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
 
     //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
 
-
     MainSizer->Add(mediaSlider, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
-
-
 
     wxBoxSizer* controlSubSizer;
     controlSubSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -172,15 +211,8 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( shuffle, 0, 0, 5 );
 
-    prevSession = new wxButton( this, wxID_ANY, wxT("Load"), wxDefaultPosition, wxSize( 60,30 ), 0 );
-    prevSession->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    controlSubSizer->Add( prevSession, 0, 0, 5 );
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
-
-    save = new wxButton( this, wxID_ANY, wxT("Save"), wxDefaultPosition, wxSize( 60,30 ), 0 );
-    save->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    controlSubSizer->Add( save, 0, 0, 5 );
 
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
@@ -281,7 +313,7 @@ void MainFrame::onTextEnter(wxCommandEvent &event){
 }
 void MainFrame::onKillFocus(wxFocusEvent &event){
     if(searchTimer.IsRunning())
-    searchTimer.Stop();
+        searchTimer.Stop();
 }
 
 void MainFrame::onAdd(wxCommandEvent &event) {
@@ -384,11 +416,12 @@ void MainFrame::onEndSeek(wxScrollEvent &event) {
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
+    wxMessageBox(wxT("Ready to play"));
 
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
-    mediaCtrl->Play();
+   // mediaCtrl->Play();
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
