@@ -44,7 +44,7 @@ public:
     void setLoop();
     void save() override;
     void load() override;
-    map<wxString, wxString> getMetadata(wxFileDialog *picker) override;
+    map<wxString, wxString> getMetadata(wxString *filePath) override;
 private:
     Playlist* playlist;
 

@@ -23,10 +23,10 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
         auto tempList = playlist->getPlayList();
         if(mediaControl!=nullptr)
             mediaControl -> Load(i);
-
+        auto m = getMetadata(&i);
 /*
     /////////////////////////////////////////////////
-    auto m = getMetadata(filePicker);
+
     auto title = m.find(wxT("title")) -> second;
     auto album = m.find(wxT("album")) -> second;
     auto artist = m.find(wxT("artist")) -> second;
@@ -102,13 +102,11 @@ void MediaController::showAbout() {
 
 
 
-map<wxString, wxString> MediaController::getMetadata(wxFileDialog *picker) {
+map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
     //we need a const char* for FileName constructor so we need cast path(wxString)
      using namespace TagLib;
 
-     wxString filePath = picker -> GetPath();
-
-     const char* charPath = (filePath.mbc_str());
+     const char* charPath = (filePath->mbc_str());
      FileRef TagMain{FileName(charPath)};
 
     if(!TagMain.isNull() && TagMain.tag()) {
@@ -123,11 +121,11 @@ map<wxString, wxString> MediaController::getMetadata(wxFileDialog *picker) {
          wxString tagTitle(_tagTitle);
          wxString tagAlbum(_tagAlbum);
          wxString tagArtist(_tagArtist);
-
          std::map<wxString,wxString> metadata = {{"title", tagTitle}, {"album", tagAlbum}, {"artist", tagArtist}};
          return metadata;
 
-    }
+    } else
+        wxMessageBox(wxT("Sorry, you are not capable of doing something useful"));
 
 }
 
