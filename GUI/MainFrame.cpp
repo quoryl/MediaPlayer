@@ -88,14 +88,14 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap addPNG;
     addPNG.LoadFile("../ControlsPNG/add_text.png", wxBITMAP_TYPE_PNG);
 
-    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     addFile->SetBitmap(addPNG);
     addFile->SetBackgroundColour(GetBackgroundColour());
     /////////DeleteItem/////////
     wxBitmap deletePNG;
     deletePNG.LoadFile("../ControlsPNG/delete_text.png", wxBITMAP_TYPE_PNG);
 
-    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
     deleteFromPlaylist->SetBitmap(deletePNG);
     deleteFromPlaylist->SetBackgroundColour(GetBackgroundColour());
     ////////Loads previous session(saved by the user)/////////
@@ -103,7 +103,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap loadPNG;
     loadPNG.LoadFile("../ControlsPNG/load_text.png", wxBITMAP_TYPE_PNG);
 
-    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     prevSession->SetBitmap(loadPNG);
     prevSession->SetBackgroundColour(GetBackgroundColour());
 
@@ -112,7 +112,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap savePNG;
     savePNG.LoadFile("../ControlsPNG/save_text.png", wxBITMAP_TYPE_PNG);
 
-    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     save->SetBitmap(savePNG);
     save->SetBackgroundColour(GetBackgroundColour());
 
@@ -149,10 +149,11 @@ MainFrame::MainFrame(MediaController *mediaController,
     /////////MediaCtrl/////////
 
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
+    mediaCtrl->Enable();
     //mediaCtrl->SetPlaybackRate(1);
     //mediaCtrl->SetVolume(1);
     //mediaCtrl->Stop();
-    //MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
+    //MainSizer->Add( mediaCtrl, 1, 0, 5 );
 
     //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
@@ -340,13 +341,14 @@ void MainFrame::onShuffle(wxCommandEvent &event) {
         cout<< " " <<i;
     }
     cout<<"\n"<<endl;
-    controller->shuffleList();
+    controller->shuffleList();// take the indexes and play the songs in that order TODO
     indexes.clear();
 }
 
 
 
 void MainFrame::onDelete(wxCommandEvent &event) {
+
     long selectedItem = songList -> GetFirstSelected();
     cout<<selectedItem<<endl;
     while(selectedItem != -1) {
@@ -369,7 +371,7 @@ void MainFrame::onPrevious(wxCommandEvent &event) {
 
 void MainFrame::onPlay(wxCommandEvent &event) {
     controller->playSong();
-}
+    }
 
 void MainFrame::onNext(wxCommandEvent &event) {
     controller->nextSong();
@@ -415,18 +417,18 @@ void MainFrame::onEndSeek(wxScrollEvent &event) {
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
-    wxMessageBox(wxT("Ready to play"));
 
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
-   // mediaCtrl->Play();
+   mediaCtrl->Play();
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
     {
         statusBar->PopStatusText(0);
         statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
+
     }
 
 
@@ -439,6 +441,7 @@ MainFrame::~MainFrame()
         mediaTimer -> Stop();
     if(searchTimer.IsRunning())
         searchTimer.Stop();
+    delete mediaTimer;
 
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );

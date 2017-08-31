@@ -20,7 +20,7 @@ public:
     wxString genre;
 
 
-    //Must be an aggregation  with song TODO
+    //TODO
     map<int, Song> mapAlbum;
 };
 

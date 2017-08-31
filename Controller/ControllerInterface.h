@@ -29,7 +29,7 @@ public:
     virtual void save() = 0;
     virtual void load() = 0;
 
-    virtual std::map<wxString, wxString> getMetadata(wxFileDialog *filePicker) = 0;
+    virtual std::map<wxString, wxString> getMetadata(wxString *filePicker) = 0;
 
 
 };
