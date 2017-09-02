@@ -21,16 +21,6 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
 
     for(auto i: *paths) {
         auto tempList = playlist->getPlayList();
-        if(mediaControl!=nullptr)
-            mediaControl -> Load(i);
-        auto m = getMetadata(&i);
-/*
-    /////////////////////////////////////////////////
-
-    auto title = m.find(wxT("title")) -> second;
-    auto album = m.find(wxT("album")) -> second;
-    auto artist = m.find(wxT("artist")) -> second;
-*/
 
         wxString name = wxFileName(i).GetName();
         bool found = false;
@@ -40,7 +30,7 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
         } else {
             for (auto g : tempList) {
                 //this is temporary. The title is not enough. I should check something like title+artist when taglib will work
-                if ((g->getTitle()) == (name)) {
+                if ((g->getSongPath()).IsSameAs(i)) {
                     found = true;
                 }
             }
@@ -52,17 +42,12 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
         }
     }
 
-    /////////////////////////////////////////////////////
-
-
-
-
 }
 void MediaController::deleteSong(wxString toDeletePath) {
 
     auto tempList = playlist -> getPlayList();
     for(auto g : tempList){
-        if(g->getTitle().IsSameAs(toDeletePath)) {
+        if(g->getSongPath().IsSameAs(toDeletePath)) {
             playlist->deleteFromPlaylist(g);
         }
     }
@@ -104,7 +89,7 @@ void MediaController::showAbout() {
 
 map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
     //we need a const char* for FileName constructor so we need cast path(wxString)
-     using namespace TagLib;
+   /*  using namespace TagLib;
 
      const char* charPath = (filePath->mbc_str());
      FileRef TagMain{FileName(charPath)};
@@ -125,8 +110,8 @@ map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
          return metadata;
 
     } else
-        wxMessageBox(wxT("Sorry, you are not capable of doing something useful"));
-
+        wxMessageBox(wxT("Taglib error : FileRef is null or tag is false"));
+*/
 }
 
 void MediaController::loop(wxMediaCtrl *mediaControl) {
