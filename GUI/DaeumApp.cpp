@@ -16,6 +16,7 @@ bool DaeumApp::OnInit() {
                                          wxT("DaeumApp"), wxDefaultPosition,wxSize(900, 400));
 
     mainFrame->Show(true);
+
     return true;
 
 }

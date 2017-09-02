@@ -30,8 +30,8 @@ void MainFrame::update(list<Song*>& playList){
         songList->InsertItem(listItem);
         songList->SetItem(nID, 0, s);
         songList->SetItem(nID, 1, iter->getTitle());
-        songList->SetItem(nID, 2, iter->getArtist());
-        songList->SetItem(nID, 3, wxT("Unknown"));
+        songList->SetItem(nID, 2, wxT("Unknown"));
+        songList->SetItem(nID, 3, path);
     }
 }
 
@@ -77,8 +77,8 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     songList->InsertColumn(0,wxT("#"),wxLIST_FORMAT_LEFT, 25);
     songList->InsertColumn(1,wxT("Title"), wxLIST_FORMAT_LEFT, 250);
-    songList->InsertColumn(2,wxT("Artist"), wxLIST_FORMAT_LEFT, 150);
-    songList->InsertColumn(3,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
+    songList->InsertColumn(2,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
+    songList->InsertColumn(3,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
 
     //////////FileDialog//////////
 
@@ -88,14 +88,14 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap addPNG;
     addPNG.LoadFile("../ControlsPNG/add_text.png", wxBITMAP_TYPE_PNG);
 
-    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     addFile->SetBitmap(addPNG);
     addFile->SetBackgroundColour(GetBackgroundColour());
     /////////DeleteItem/////////
     wxBitmap deletePNG;
     deletePNG.LoadFile("../ControlsPNG/delete_text.png", wxBITMAP_TYPE_PNG);
 
-    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
     deleteFromPlaylist->SetBitmap(deletePNG);
     deleteFromPlaylist->SetBackgroundColour(GetBackgroundColour());
     ////////Loads previous session(saved by the user)/////////
@@ -103,7 +103,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap loadPNG;
     loadPNG.LoadFile("../ControlsPNG/load_text.png", wxBITMAP_TYPE_PNG);
 
-    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    prevSession = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     prevSession->SetBitmap(loadPNG);
     prevSession->SetBackgroundColour(GetBackgroundColour());
 
@@ -112,7 +112,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     wxBitmap savePNG;
     savePNG.LoadFile("../ControlsPNG/save_text.png", wxBITMAP_TYPE_PNG);
 
-    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,30), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
+    save = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     save->SetBitmap(savePNG);
     save->SetBackgroundColour(GetBackgroundColour());
 
@@ -153,7 +153,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     //mediaCtrl->SetPlaybackRate(1);
     //mediaCtrl->SetVolume(1);
     //mediaCtrl->Stop();
-    //MainSizer->Add( mediaCtrl, 0, wxALL, 5 );
+    //MainSizer->Add( mediaCtrl, 1, 0, 5 );
 
     //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
@@ -184,6 +184,15 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Play, 0, 0, 5 );
 
+    wxBitmap pause;
+    pause.LoadFile("../ControlsPNG/pause.png", wxBITMAP_TYPE_PNG);
+
+    Pause = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, pause.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Pause->SetBitmap(pause);
+    Pause->SetBackgroundColour(GetBackgroundColour());
+
+    controlSubSizer->Add( Pause, 0, 0, 5 );
+
     wxBitmap next;
     next.LoadFile("../ControlsPNG/next.png", wxBITMAP_TYPE_PNG);
 
@@ -192,6 +201,15 @@ MainFrame::MainFrame(MediaController *mediaController,
     Next->SetBackgroundColour(GetBackgroundColour());
 
     controlSubSizer->Add( Next, 0, 0, 5 );
+
+    wxBitmap stop;
+    stop.LoadFile("../ControlsPNG/stop.png", wxBITMAP_TYPE_PNG);
+
+    Stop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, stop.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Stop->SetBitmap(stop);
+    Stop->SetBackgroundColour(GetBackgroundColour());
+
+    controlSubSizer->Add( Stop, 0, 0, 5 );
 
     wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
@@ -240,10 +258,10 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Layout();
 
     statusBar = new wxStatusBar(this);
-    int widths[4] = {200, 60, 60, 300};
-    statusBar -> SetFieldsCount(4, widths);
+    int widths[3] = {200, 120, 300}; // width status bar fiels
+    statusBar -> SetFieldsCount(3, widths);
     statusBar -> PushStatusText(wxT("You will see the title here"), 0);
-    statusBar -> PushStatusText(wxT("Is being looped: False"), 3);
+    statusBar -> PushStatusText(wxT("Is being looped: False"), 2);
     this->SetStatusBar(statusBar);
     /////////Menu//////////
 
@@ -277,6 +295,8 @@ MainFrame::MainFrame(MediaController *mediaController,
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
+    Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
+    Pause->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
@@ -341,17 +361,18 @@ void MainFrame::onShuffle(wxCommandEvent &event) {
         cout<< " " <<i;
     }
     cout<<"\n"<<endl;
-    controller->shuffleList();
+    controller->shuffleList();// take the indexes and play the songs in that order TODO
     indexes.clear();
 }
 
 
 
 void MainFrame::onDelete(wxCommandEvent &event) {
+
     long selectedItem = songList -> GetFirstSelected();
     cout<<selectedItem<<endl;
     while(selectedItem != -1) {
-        controller -> deleteSong(songList -> GetItemText(selectedItem,1));
+        controller -> deleteSong(songList -> GetItemText(selectedItem,3));
         if(selectedItem != songList->GetItemCount()) {
             selectedItem = songList -> GetNextSelected(selectedItem);
             cout<<selectedItem<<"from next"<<endl;
@@ -369,11 +390,22 @@ void MainFrame::onPrevious(wxCommandEvent &event) {
 }
 
 void MainFrame::onPlay(wxCommandEvent &event) {
-    controller->playSong();
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED)
+        mediaCtrl->Play();
+}
+
+void MainFrame::onPause(wxCommandEvent& event){
+
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PLAYING)
+        mediaCtrl->Pause();
 }
 
 void MainFrame::onNext(wxCommandEvent &event) {
-    controller->nextSong();
+
+}
+
+void MainFrame::onStop(wxCommandEvent &event) {
+    mediaCtrl -> Stop();
 }
 
 void MainFrame::setLoopFrame(wxCommandEvent& event){
@@ -416,20 +448,16 @@ void MainFrame::onEndSeek(wxScrollEvent &event) {
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
-    wxMessageBox(wxT("Ready to play"));
-
+    mediaCtrl->Play();
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
-   // mediaCtrl->Play();
+    mediaCtrl->Load(songList->GetItemText(event.GetIndex(), 3));
+    statusBar->PopStatusText(0);
+    statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
-    {
-        statusBar->PopStatusText(0);
-        statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
-    }
-
 
 }
 MainFrame::~MainFrame()
@@ -440,6 +468,7 @@ MainFrame::~MainFrame()
         mediaTimer -> Stop();
     if(searchTimer.IsRunning())
         searchTimer.Stop();
+    delete mediaTimer;
 
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
@@ -450,7 +479,9 @@ MainFrame::~MainFrame()
     shuffle->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onShuffle), nullptr, this);
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
+    Pause->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
+    Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
