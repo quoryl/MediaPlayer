@@ -57,6 +57,7 @@ public:
     wxMediaCtrl* mediaCtrl;
     wxButton* Previous;
     wxButton* Play;
+    wxButton* Pause;
     wxButton* Next;
     wxButton* Stop;
     wxButton* Loop;
@@ -84,6 +85,7 @@ public:
     void onShuffle(wxCommandEvent &event);
     void onPrevious( wxCommandEvent& event );
     void onPlay( wxCommandEvent& event );
+    void onPause( wxCommandEvent& event );
     void onNext( wxCommandEvent& event ) ;
     void onStop( wxCommandEvent& event );
     void setLoopFrame(wxCommandEvent& event);

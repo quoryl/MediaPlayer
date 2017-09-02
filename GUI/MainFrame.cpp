@@ -184,6 +184,15 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Play, 0, 0, 5 );
 
+    wxBitmap pause;
+    pause.LoadFile("../ControlsPNG/pause.png", wxBITMAP_TYPE_PNG);
+
+    Pause = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, pause.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Pause->SetBitmap(pause);
+    Pause->SetBackgroundColour(GetBackgroundColour());
+
+    controlSubSizer->Add( Pause, 0, 0, 5 );
+
     wxBitmap next;
     next.LoadFile("../ControlsPNG/next.png", wxBITMAP_TYPE_PNG);
 
@@ -287,6 +296,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
+    Pause->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
@@ -362,7 +372,7 @@ void MainFrame::onDelete(wxCommandEvent &event) {
     long selectedItem = songList -> GetFirstSelected();
     cout<<selectedItem<<endl;
     while(selectedItem != -1) {
-        controller -> deleteSong(songList -> GetItemText(selectedItem,1));
+        controller -> deleteSong(songList -> GetItemText(selectedItem,3));
         if(selectedItem != songList->GetItemCount()) {
             selectedItem = songList -> GetNextSelected(selectedItem);
             cout<<selectedItem<<"from next"<<endl;
@@ -380,11 +390,18 @@ void MainFrame::onPrevious(wxCommandEvent &event) {
 }
 
 void MainFrame::onPlay(wxCommandEvent &event) {
-    controller->playSong();
-    }
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED)
+        mediaCtrl->Play();
+}
+
+void MainFrame::onPause(wxCommandEvent& event){
+
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PLAYING)
+        mediaCtrl->Pause();
+}
 
 void MainFrame::onNext(wxCommandEvent &event) {
-    controller->nextSong();
+
 }
 
 void MainFrame::onStop(wxCommandEvent &event) {
@@ -462,6 +479,7 @@ MainFrame::~MainFrame()
     shuffle->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onShuffle), nullptr, this);
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
+    Pause->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);

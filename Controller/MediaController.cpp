@@ -42,17 +42,12 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
         }
     }
 
-    /////////////////////////////////////////////////////
-
-
-
-
 }
 void MediaController::deleteSong(wxString toDeletePath) {
 
     auto tempList = playlist -> getPlayList();
     for(auto g : tempList){
-        if(g->getTitle().IsSameAs(toDeletePath)) {
+        if(g->getSongPath().IsSameAs(toDeletePath)) {
             playlist->deleteFromPlaylist(g);
         }
     }
