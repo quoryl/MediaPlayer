@@ -30,8 +30,8 @@ void MainFrame::update(list<Song*>& playList){
         songList->InsertItem(listItem);
         songList->SetItem(nID, 0, s);
         songList->SetItem(nID, 1, iter->getTitle());
-        songList->SetItem(nID, 2, iter->getArtist());
-        songList->SetItem(nID, 3, wxT("Unknown"));
+        songList->SetItem(nID, 2, wxT("Unknown"));
+        songList->SetItem(nID, 3, path);
     }
 }
 
@@ -77,8 +77,8 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     songList->InsertColumn(0,wxT("#"),wxLIST_FORMAT_LEFT, 25);
     songList->InsertColumn(1,wxT("Title"), wxLIST_FORMAT_LEFT, 250);
-    songList->InsertColumn(2,wxT("Artist"), wxLIST_FORMAT_LEFT, 150);
-    songList->InsertColumn(3,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
+    songList->InsertColumn(2,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
+    songList->InsertColumn(3,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
 
     //////////FileDialog//////////
 
@@ -193,6 +193,15 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Next, 0, 0, 5 );
 
+    wxBitmap stop;
+    stop.LoadFile("../ControlsPNG/stop.png", wxBITMAP_TYPE_PNG);
+
+    Stop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, stop.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Stop->SetBitmap(stop);
+    Stop->SetBackgroundColour(GetBackgroundColour());
+
+    controlSubSizer->Add( Stop, 0, 0, 5 );
+
     wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
 
@@ -277,6 +286,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
+    Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
@@ -377,6 +387,10 @@ void MainFrame::onNext(wxCommandEvent &event) {
     controller->nextSong();
 }
 
+void MainFrame::onStop(wxCommandEvent &event) {
+    mediaCtrl -> Stop();
+}
+
 void MainFrame::setLoopFrame(wxCommandEvent& event){
     controller->setLoop();
 }
@@ -417,20 +431,16 @@ void MainFrame::onEndSeek(wxScrollEvent &event) {
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
-
+    mediaCtrl->Play();
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
-   mediaCtrl->Play();
+    mediaCtrl->Load(songList->GetItemText(event.GetIndex(), 3));
+    statusBar->PopStatusText(0);
+    statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
-    {
-        statusBar->PopStatusText(0);
-        statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
-
-    }
-
 
 }
 MainFrame::~MainFrame()
@@ -453,6 +463,7 @@ MainFrame::~MainFrame()
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
+    Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);

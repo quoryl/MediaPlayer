@@ -1,3 +1,5 @@
-/home/azrael/Music/02. MY DARLING.mp3
 /home/azrael/Music/DINOSAUR.mp3
-/home/azrael/Music/09. 내가 미쳐 (Going Crazy).mp3
+/home/azrael/Music/Going Crazy.mp3
+/home/azrael/Music/My Darling.mp3
+/home/azrael/Music/Today.mp3
+/home/azrael/Music/Whisper.mp3

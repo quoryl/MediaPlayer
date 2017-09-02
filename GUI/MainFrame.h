@@ -58,6 +58,7 @@ public:
     wxButton* Previous;
     wxButton* Play;
     wxButton* Next;
+    wxButton* Stop;
     wxButton* Loop;
     wxButton* prevSession;
     wxButton* save;
@@ -84,6 +85,7 @@ public:
     void onPrevious( wxCommandEvent& event );
     void onPlay( wxCommandEvent& event );
     void onNext( wxCommandEvent& event ) ;
+    void onStop( wxCommandEvent& event );
     void setLoopFrame(wxCommandEvent& event);
     void onPrevSession(wxCommandEvent& event);
     void onSave(wxCommandEvent &event);

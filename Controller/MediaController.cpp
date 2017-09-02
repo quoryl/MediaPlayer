@@ -21,16 +21,6 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
 
     for(auto i: *paths) {
         auto tempList = playlist->getPlayList();
-        if(mediaControl!=nullptr)
-            mediaControl -> Load(i);
- /*       auto m = getMetadata(&i);
-
-    /////////////////////////////////////////////////
-
-    auto title = m.find(wxT("title")) -> second;
-    auto album = m.find(wxT("album")) -> second;
-    auto artist = m.find(wxT("artist")) -> second;
-*/
 
         wxString name = wxFileName(i).GetName();
         bool found = false;
@@ -40,7 +30,7 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
         } else {
             for (auto g : tempList) {
                 //this is temporary. The title is not enough. I should check something like title+artist when taglib will work
-                if ((g->getTitle()) == (name)) {
+                if ((g->getSongPath()).IsSameAs(i)) {
                     found = true;
                 }
             }
