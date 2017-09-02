@@ -52,6 +52,11 @@ void Playlist::removeObserver(Observer *o) {
      playListObservers.remove(o);
 }
 
+void Playlist::nowPlaying(Song* s){
+     for(auto o: playListObservers)
+         o->updateSongDetails(s);
+}
+
 const list<Song *> &Playlist::getPlayList() const {
     return playList;
 }

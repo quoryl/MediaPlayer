@@ -22,7 +22,7 @@ public:
     void notifyObserver() override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
-
+    void nowPlaying(Song* s);
     const list<Song *> &getPlayList() const;
 
     virtual ~Playlist();

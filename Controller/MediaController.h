@@ -31,7 +31,7 @@ public:
     explicit MediaController(Playlist* pList);
 
     void searchItem(wxString text) override ;
-    void addFile(wxArrayString *paths, wxMediaCtrl *mediaControl = nullptr) override ;
+    void addFile(wxArrayString *paths) override ;
     void deleteSong(wxString toDeletePath) override ;
     void shuffleList() override ;
     void prevSong() override ;
@@ -44,6 +44,8 @@ public:
     void setLoop();
     void save() override;
     void load() override;
+    Song* getSongFromPlaylist(wxString path);
+    void tellPlaylist(wxString songPath);
     map<wxString, wxString> getMetadata(wxString *filePath) override;
 private:
     Playlist* playlist;

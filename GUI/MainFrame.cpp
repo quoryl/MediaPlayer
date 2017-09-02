@@ -35,6 +35,13 @@ void MainFrame::update(list<Song*>& playList){
     }
 }
 
+void MainFrame::updateSongDetails(Song* s){
+
+    statusBar->PopStatusText(0);
+    statusBar->PushStatusText(s->getTitle(), 0);
+
+}
+
 MainFrame::MainFrame(MediaController *mediaController,
                      Playlist *pList, wxWindow *parent, wxWindowID id,const wxString &title, const wxPoint &pos,
                      const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
@@ -150,10 +157,6 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
     mediaCtrl->Enable();
-    //mediaCtrl->SetPlaybackRate(1);
-    //mediaCtrl->SetVolume(1);
-    //mediaCtrl->Stop();
-    //MainSizer->Add( mediaCtrl, 1, 0, 5 );
 
     //////////Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
@@ -340,7 +343,7 @@ void MainFrame::onAdd(wxCommandEvent &event) {
     loadFile->ShowModal();
     wxArrayString savePaths;
     loadFile -> GetPaths(savePaths);
-    controller->addFile(&savePaths, mediaCtrl);
+    controller->addFile(&savePaths);
 }
 
 void MainFrame::onShuffle(wxCommandEvent &event) {
@@ -452,9 +455,10 @@ void MainFrame::onLoaded(wxMediaEvent &event) {
 }
 
 void MainFrame::onListItemActivated(wxListEvent &event) {
+
     mediaCtrl->Load(songList->GetItemText(event.GetIndex(), 3));
-    statusBar->PopStatusText(0);
-    statusBar->PushStatusText(songList->GetItemText(event.GetIndex(), 1));
+    controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));
+
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){

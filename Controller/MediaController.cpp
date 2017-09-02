@@ -17,7 +17,7 @@ void MediaController::searchItem(wxString text) {
 
 }
 
-void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
+void MediaController::addFile(wxArrayString *paths) {
 
     for(auto i: *paths) {
         auto tempList = playlist->getPlayList();
@@ -45,12 +45,7 @@ void MediaController::addFile(wxArrayString *paths, wxMediaCtrl *mediaControl) {
 }
 void MediaController::deleteSong(wxString toDeletePath) {
 
-    auto tempList = playlist -> getPlayList();
-    for(auto g : tempList){
-        if(g->getSongPath().IsSameAs(toDeletePath)) {
-            playlist->deleteFromPlaylist(g);
-        }
-    }
+    playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
     wxMessageBox(wxT("Song/s Deleted!"));
 
 }
@@ -115,18 +110,11 @@ map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
 }
 
 void MediaController::loop(wxMediaCtrl *mediaControl) {
-/*
-    if (song -> isLoop()){
-        mediaControl -> Play();
-    }
-*/
+
 }
 
 void MediaController::setLoop() {
-    //FIXME playlist is now the subject
-    /*
-    song -> setLoop( !song -> isLoop() );
-    std:: cout << song -> isLoop() << std::endl;*/
+
 }
 void MediaController::save(){
     wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
@@ -163,4 +151,15 @@ void MediaController::load() {
     }
     else
         wxMessageBox(wxT("File not found! "));
+}
+
+void MediaController::tellPlaylist(wxString songPath){
+    playlist->nowPlaying(getSongFromPlaylist(songPath));
+}
+
+Song* MediaController::getSongFromPlaylist(wxString path){
+    for(auto iter : playlist->getPlayList()){
+        if(iter->getSongPath().IsSameAs(path))
+            return iter;
+    }
 }

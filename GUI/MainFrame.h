@@ -27,8 +27,6 @@
 #include "../Controller/MediaController.h"
 #include "MediaTimer.h"
 
-
-
 using namespace std;
 class MediaController;
 class MediaTimer;
@@ -36,7 +34,7 @@ class MediaTimer;
 class MainFrame : public wxFrame, public Observer {
 public:
     void update(list<Song*>& playList) override;
-
+    void updateSongDetails(Song* s) override;
     bool IsBeingDragged;
 
     MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
