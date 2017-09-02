@@ -258,10 +258,10 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Layout();
 
     statusBar = new wxStatusBar(this);
-    int widths[4] = {200, 60, 60, 300};
-    statusBar -> SetFieldsCount(4, widths);
+    int widths[3] = {200, 120, 300}; // width status bar fiels
+    statusBar -> SetFieldsCount(3, widths);
     statusBar -> PushStatusText(wxT("You will see the title here"), 0);
-    statusBar -> PushStatusText(wxT("Is being looped: False"), 3);
+    statusBar -> PushStatusText(wxT("Is being looped: False"), 2);
     this->SetStatusBar(statusBar);
     /////////Menu//////////
 
