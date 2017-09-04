@@ -468,7 +468,7 @@ void MainFrame::onStopped(wxMediaEvent& event){
 }
 void MainFrame::onListItemActivated(wxListEvent &event) {
 
-    mediaCtrl->Load(songList->GetItemText(event.GetIndex(), 3));
+    play(songList->GetItemText(event.GetIndex(), 3));
     controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));
 
 }
@@ -476,6 +476,11 @@ void MainFrame::onListItemActivated(wxListEvent &event) {
 void MainFrame::onListItemSelected(wxListEvent &event){
 
 }
+
+void MainFrame::play(wxString path){
+    mediaCtrl->Load(path);
+}
+
 MainFrame::~MainFrame()
 {
     playlist->removeObserver(this);

@@ -35,6 +35,7 @@ class MainFrame : public wxFrame, public Observer {
 public:
     void update(list<Song*>& playList) override;
     void updateSongDetails(Song* s) override;
+    void play(wxString path) override;
     bool IsBeingDragged;
 
     MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,

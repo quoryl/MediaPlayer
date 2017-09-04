@@ -58,14 +58,14 @@ void MediaController::shuffleList() {
         wxMessageBox("You can't shuffle an empty playlist!");
         return;
     }
-    long seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::vector<long>indexes;
+    long seed = std::chrono::system_clock::now().time_since_epoch().count();
     for (long i = 0; i < playlist->getPlayList().size(); i++) {
         indexes.push_back(i);
     }
 
     std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
-
+    playlist->songChanged(&indexes);
     for(auto i : indexes) {
         cout<< " " << i;
     }

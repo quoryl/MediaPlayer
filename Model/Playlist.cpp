@@ -58,9 +58,24 @@ void Playlist::removeObserver(Observer *o) {
 }
 
 void Playlist::nowPlaying(Song* s){
-     s->setSongState(wxMEDIASTATE_PLAYING);
-     for(auto o: playListObservers)
-         o->updateSongDetails(s);
+    s->setSongState(wxMEDIASTATE_PLAYING);
+    for(auto o: playListObservers)
+        o->updateSongDetails(s);
+}
+
+void Playlist::songChanged(std::vector<long>* indexList){
+    auto iter = *indexList->begin();
+        for(auto o : playListObservers) {
+            o->play(this->getSong(iter)->getSongPath());
+            o->updateSongDetails(this->getSong(iter));
+        }
+}
+
+
+Song* Playlist::getSong(long ID){
+    for(auto iter: playList)
+        if(iter->getID() == ID)
+            return iter;
 }
 
 const list<Song *> &Playlist::getPlayList() const {
