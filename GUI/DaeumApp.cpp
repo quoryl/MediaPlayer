@@ -13,7 +13,7 @@ bool DaeumApp::OnInit() {
     auto playlist = new Playlist;
     auto controller = new MediaController(playlist);
     MainFrame* mainFrame = new MainFrame(controller, playlist, nullptr, wxID_ANY,
-                                         wxT("DaeumApp"), wxDefaultPosition,wxSize(900, 400));
+                                         wxT("musicPlayer"), wxDefaultPosition,wxSize(900, 400));
 
     mainFrame->Show(true);
 

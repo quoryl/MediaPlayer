@@ -22,8 +22,11 @@ void MainFrame::update(list<Song*>& playList){
         wxString length;
         length << iter->getLength();
 
-        //listItem.SetId(nID = songList->GetItemCount());
-        listItem.SetId(nID);
+        //for the next line: I should write only nID, not initialize it with getitemcount
+        //for some reason that makes an assertion fail: invalid item index
+        //index>=0 && index <itemcount FIXME
+
+        listItem.SetId(nID = songList->GetItemCount());
         listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
         listItem.SetData( iter );
 

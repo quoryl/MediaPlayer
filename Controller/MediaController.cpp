@@ -54,7 +54,7 @@ void MediaController::deleteSong(wxString toDeletePath) {
 }
 
 void MediaController::shuffleList() {
-    if(playlist->getPlayList().size() == 0) {
+    if(playlist->getPlayList().empty()) {
         wxMessageBox("You can't shuffle an empty playlist!");
         return;
     }
@@ -62,13 +62,12 @@ void MediaController::shuffleList() {
     std::vector<long>indexes;
     for (long i = 0; i < playlist->getPlayList().size(); i++) {
         indexes.push_back(i);
-
     }
 
     std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
 
     for(auto i : indexes) {
-        cout<< " " <<i;
+        cout<< " " << i;
     }
     cout<<"\n"<<endl;
 
