@@ -17,15 +17,15 @@ public:
     bool addToPlaylist( Song* song);
     void searchPlaylist(wxString filterText);
     void deleteFromPlaylist(Song* song);
-
-
     void notifyObserver() override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
     void nowPlaying(Song* s);
     const list<Song *> &getPlayList() const;
+    void setPlayList(const list<Song *> &playList);
 
     virtual ~Playlist();
+
 private:
     list<Song*> playList;
 

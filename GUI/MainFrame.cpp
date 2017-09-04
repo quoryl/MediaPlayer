@@ -9,36 +9,63 @@
 void MainFrame::update(list<Song*>& playList){
     songList->DeleteAllItems();
     for(auto iter: playList){
-        wxString path = iter -> getSongPath();
 
+        wxString path = iter -> getSongPath();
         wxListItem listItem;
         listItem.SetAlign(wxLIST_FORMAT_LEFT);
 
-        int nID ;
-
-        listItem.SetId(nID = songList->GetItemCount());
-        listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
-        //listItem.SetData(new wxString(path));
-        listItem.SetData( iter );
-
-        //cast an int to a wxString
-
+        long nID = iter->getID();
+        //cast an int/long to a wxString
         wxString s;
         s << nID;
 
+        wxString length;
+        length << iter->getLength();
+
+        //listItem.SetId(nID = songList->GetItemCount());
+        listItem.SetId(nID);
+        listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
+        listItem.SetData( iter );
 
         songList->InsertItem(listItem);
         songList->SetItem(nID, 0, s);
         songList->SetItem(nID, 1, iter->getTitle());
-        songList->SetItem(nID, 2, wxT("Unknown"));
+        songList->SetItem(nID, 2, length);
         songList->SetItem(nID, 3, path);
     }
 }
 
 void MainFrame::updateSongDetails(Song* s){
 
+    wxLongLong llLength = mediaCtrl->Length();
+    int nMinutes = (int) (llLength / 60000).GetValue();
+    int nSeconds = (int) ((llLength % 60000) / 1000).GetValue();
+
+    //convertion from int to string
+
+    wxString minutes;
+    wxString seconds;
+    minutes << nMinutes;
+    seconds << nSeconds;
+
+    //TODO maybe I could save the length in an array or something similar and display from there
+
+    if(seconds == "0")
+        songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds );
+    else
+        songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
+    songList->SetItemTextColour(s->getID(), wxColour(97,119,136));
     statusBar->PopStatusText(0);
     statusBar->PushStatusText(s->getTitle(), 0);
+
+    if(s->isLoop()) {
+        statusBar->PopStatusText(2);
+        statusBar->PushStatusText(wxT("Is being looped: True"), 2);
+    }
+    else{
+        statusBar->PopStatusText(2);
+        statusBar->PushStatusText(wxT("Is being looped: False"), 2);
+    }
 
 }
 
@@ -86,6 +113,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList->InsertColumn(1,wxT("Title"), wxLIST_FORMAT_LEFT, 250);
     songList->InsertColumn(2,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
     songList->InsertColumn(3,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
+    songList->SetBackgroundColour(GetBackgroundColour());
 
     //////////FileDialog//////////
 
@@ -306,7 +334,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
     mediaCtrl->Connect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
-    mediaCtrl->Connect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onLoop), nullptr, this);
+    mediaCtrl->Connect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
     songList->Connect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Connect(aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Connect(quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
@@ -347,25 +375,7 @@ void MainFrame::onAdd(wxCommandEvent &event) {
 }
 
 void MainFrame::onShuffle(wxCommandEvent &event) {
-    if(songList->GetItemCount() == 0) {
-        wxMessageBox("You can't shuffle an empty playlist!");
-        return;
-    }
-    long seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::vector<long>indexes;
-    for (long i = 0; i < songList->GetItemCount(); i++) {
-        indexes.push_back(i);
-
-    }
-
-    std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
-
-    for(auto i : indexes) {
-        cout<< " " <<i;
-    }
-    cout<<"\n"<<endl;
-    controller->shuffleList();// take the indexes and play the songs in that order TODO
-    indexes.clear();
+    controller->shuffleList();
 }
 
 
@@ -415,10 +425,6 @@ void MainFrame::setLoopFrame(wxCommandEvent& event){
     controller->setLoop();
 }
 
-void MainFrame::onLoop(wxMediaEvent& event){
-    controller -> loop(mediaCtrl);
-}
-
 void MainFrame::onPrevSession(wxCommandEvent &event) {
     controller->load();
 }
@@ -454,6 +460,9 @@ void MainFrame::onLoaded(wxMediaEvent &event) {
     mediaCtrl->Play();
 }
 
+void MainFrame::onStopped(wxMediaEvent& event){
+
+}
 void MainFrame::onListItemActivated(wxListEvent &event) {
 
     mediaCtrl->Load(songList->GetItemText(event.GetIndex(), 3));
@@ -492,7 +501,7 @@ MainFrame::~MainFrame()
     Volume->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onScrollTrack), nullptr, this);
     Volume->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChanged), nullptr, this);
     mediaCtrl->Disconnect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
-    mediaCtrl->Disconnect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onLoop), nullptr, this);
+    mediaCtrl->Disconnect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
     songList->Disconnect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));

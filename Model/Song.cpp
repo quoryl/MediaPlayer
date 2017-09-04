@@ -4,14 +4,14 @@
 
 #include "Song.h"
 
-Song::Song( wxString title, wxString artist, wxString album, int duration, wxString sp):title(title),
-         artist(artist), album(album), length(duration), songPath(sp){}
+Song::Song( wxString title, wxString artist, wxString album, int duration, wxString path):title(title),
+         artist(artist), album(album), length(duration), songPath(path){}
 
-int Song::getLength() const {
+long Song::getLength() const {
     return length;
 }
 
-void Song::setLength(int length) {
+void Song::setLength(long length) {
     Song::length = length;
 }
 
@@ -55,5 +55,21 @@ const wxString Song::getSongPath(){
 
 void Song::setSongPath(const wxString& sp){
     songPath = sp;
+}
+
+long Song::getID() const {
+    return ID;
+}
+
+void Song::setID(long ID) {
+    Song::ID = ID;
+}
+
+wxMediaState Song::getSongState() const {
+    return songState;
+}
+
+void Song::setSongState(wxMediaState songState) {
+    Song::songState = songState;
 }
 

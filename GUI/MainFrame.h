@@ -96,7 +96,7 @@ public:
     void onBeginSeek(wxScrollEvent& event);
     void onEndSeek(wxScrollEvent& event);
     void onLoaded(wxMediaEvent& event);
-    void onLoop(wxMediaEvent& event);
+    void onStopped(wxMediaEvent& event);
     void onListItemActivated(wxListEvent& event);
     void onListItemSelected(wxListEvent& event);
     void onKillFocus(wxFocusEvent& event);

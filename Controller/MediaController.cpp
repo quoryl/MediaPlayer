@@ -1,9 +1,6 @@
 //
 // Created by azrael on 31/07/17.
 //
-
-
-
 #include "MediaController.h"
 
 
@@ -25,18 +22,24 @@ void MediaController::addFile(wxArrayString *paths) {
         wxString name = wxFileName(i).GetName();
         bool found = false;
         if (tempList.empty()) {
+
             Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
+            song->setID(playlist->getPlayList().size());
             playlist->addToPlaylist(song); //to std::list
-        } else {
+
+        }
+        else {
+
             for (auto g : tempList) {
-                //this is temporary. The title is not enough. I should check something like title+artist when taglib will work
                 if ((g->getSongPath()).IsSameAs(i)) {
                     found = true;
                 }
             }
             if (!found) {
                 Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+                song->setID(playlist->getPlayList().size());
                 playlist->addToPlaylist(song); //to std::list
+
             }
 
         }
@@ -51,7 +54,25 @@ void MediaController::deleteSong(wxString toDeletePath) {
 }
 
 void MediaController::shuffleList() {
+    if(playlist->getPlayList().size() == 0) {
+        wxMessageBox("You can't shuffle an empty playlist!");
+        return;
+    }
+    long seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::vector<long>indexes;
+    for (long i = 0; i < playlist->getPlayList().size(); i++) {
+        indexes.push_back(i);
 
+    }
+
+    std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
+
+    for(auto i : indexes) {
+        cout<< " " <<i;
+    }
+    cout<<"\n"<<endl;
+
+    indexes.clear();
 }
 
 void MediaController::prevSong() {
@@ -114,6 +135,11 @@ void MediaController::loop(wxMediaCtrl *mediaControl) {
 }
 
 void MediaController::setLoop() {
+    auto tempList = playlist->getPlayList();
+    for(auto iter : tempList){
+        if(iter->getSongState() == wxMEDIASTATE_PLAYING || iter ->getSongState() == wxMEDIASTATE_PAUSED)
+            iter->setLoop(!iter->isLoop());
+    }
 
 }
 void MediaController::save(){
@@ -154,10 +180,12 @@ void MediaController::load() {
 }
 
 void MediaController::tellPlaylist(wxString songPath){
+
     playlist->nowPlaying(getSongFromPlaylist(songPath));
 }
 
 Song* MediaController::getSongFromPlaylist(wxString path){
+
     for(auto iter : playlist->getPlayList()){
         if(iter->getSongPath().IsSameAs(path))
             return iter;

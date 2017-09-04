@@ -15,8 +15,13 @@ bool Playlist::addToPlaylist(Song* song) {
 }
 
 void Playlist::deleteFromPlaylist(Song* song){
+    long elementNumber = 0;
     if(song != nullptr) {
         playList.remove(song);
+        for(auto iter: playList) {
+            iter->setID(elementNumber);
+            elementNumber++;
+        }
         notifyObserver();
     }
 
@@ -53,6 +58,7 @@ void Playlist::removeObserver(Observer *o) {
 }
 
 void Playlist::nowPlaying(Song* s){
+     s->setSongState(wxMEDIASTATE_PLAYING);
      for(auto o: playListObservers)
          o->updateSongDetails(s);
 }
@@ -61,12 +67,17 @@ const list<Song *> &Playlist::getPlayList() const {
     return playList;
 }
 
+void Playlist::setPlayList(const list<Song *> &playList) {
+    Playlist::playList = playList;
+}
 
 Playlist::~Playlist() {
     for(auto i: playList){
         delete i;
     }
 }
+
+
 
 
 

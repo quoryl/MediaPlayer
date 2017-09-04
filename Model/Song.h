@@ -5,6 +5,7 @@
 #ifndef DAEUM_SONG_H
 #define DAEUM_SONG_H
 
+#include <wx/mediactrl.h>
 #include "wx/wx.h"
 
 
@@ -13,11 +14,11 @@ class Song {
 
 public:
 
-    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString sp = wxEmptyString);
+    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString path = wxEmptyString);
 
-    int getLength() const;
+    long getLength() const;
 
-    void setLength(int length);
+    void setLength(long length);
 
     const wxString getTitle() const;
 
@@ -36,16 +37,28 @@ public:
     bool isLoop() const;
 
     const wxString getSongPath();
+
     void setSongPath(const wxString& sp);
 
+    long getID() const;
+
+    void setID(long ID);
+
+    wxMediaState getSongState() const;
+
+    void setSongState(wxMediaState songState);
 
 private:
-    int length;
+    long length;
     wxString title;
     wxString artist;
     wxString album;
     wxString songPath;
+    long ID;
     bool loop = false;
+    wxMediaState songState;
+
+
 
 };
 
