@@ -88,8 +88,8 @@ public:
     void setLoopFrame(wxCommandEvent& event);
     void onPrevSession(wxCommandEvent& event);
     void onSave(wxCommandEvent &event);
-    void onScrollTrack(wxScrollEvent &event) ;
-    void onScrollChanged(wxScrollEvent &event);
+    void onThumbRelease(wxScrollEvent &event) ;
+    void onScrollChange(wxScrollEvent &event);
     void onAbout(wxCommandEvent &event);
     void onQuit(wxCommandEvent& event);
     void onBeginSeek(wxScrollEvent& event);
