@@ -58,7 +58,6 @@ public:
     wxButton* Play;
     wxButton* Pause;
     wxButton* Next;
-    wxButton* Stop;
     wxButton* Loop;
     wxButton* prevSession;
     wxButton* save;
@@ -71,7 +70,6 @@ public:
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
     wxTimer searchTimer;
-    wxCollapsiblePane* pane;
 
 
 

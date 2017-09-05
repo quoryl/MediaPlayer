@@ -218,15 +218,6 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Next, 0, 0, 5 );
 
-    wxBitmap stop;
-    stop.LoadFile("../ControlsPNG/stop.png", wxBITMAP_TYPE_PNG);
-
-    Stop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, stop.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
-    Stop->SetBitmap(stop);
-    Stop->SetBackgroundColour(GetBackgroundColour());
-
-    controlSubSizer->Add( Stop, 0, 0, 5 );
-
     wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
 
@@ -311,7 +302,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
-    Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Pause->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
@@ -399,7 +389,7 @@ void MainFrame::onPause(wxCommandEvent& event){
 }
 
 void MainFrame::onNext(wxCommandEvent &event) {
-
+    controller->nextSong();
 }
 
 void MainFrame::onStop(wxCommandEvent &event) {
@@ -482,7 +472,6 @@ MainFrame::~MainFrame()
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Pause->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
-    Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);

@@ -49,7 +49,7 @@ void MediaController::addFile(wxArrayString *paths) {
 void MediaController::deleteSong(wxString toDeletePath) {
 
     playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
-    wxMessageBox(wxT("Song/s Deleted!"));
+    wxMessageBox(wxT("Song Deleted!"));
 
 }
 
@@ -75,7 +75,17 @@ void MediaController::shuffleList() {
 }
 
 void MediaController::prevSong() {
-
+    if(playlist->getPlaying()->isLoop()){
+        tellPlaylist(playlist->getPlaying()->getSongPath());
+    }
+    else {
+        if (playlist->getPlaying()->getID() - 1 != -1) {
+            auto nextSongID = playlist->getPlaying()->getID() - 1;
+            for (auto iter: playlist->getPlayList())
+                if (iter->getID() == nextSongID)
+                    tellPlaylist(iter->getSongPath());
+        }
+    }
 }
 
 void MediaController::playSong() {
@@ -83,7 +93,7 @@ void MediaController::playSong() {
 }
 
 void MediaController::nextSong() {
-
+    songStopped();
 }
 
 void MediaController::showVolume() {
