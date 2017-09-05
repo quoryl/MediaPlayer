@@ -53,10 +53,7 @@ void MainFrame::updateSongDetails(Song* s){
 
     //TODO maybe I could save the length in an array or something similar and display from there
 
-    if(seconds == "0")
-        songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds );
-    else
-        songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
+    seconds=="0" ? songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds ) : songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
 
     wxString ID;
     ID << s->getID();
@@ -218,6 +215,15 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Next, 0, 0, 5 );
 
+    wxBitmap stop;
+    stop.LoadFile("../ControlsPNG/stop.png", wxBITMAP_TYPE_PNG);
+
+    Stop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, stop.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Stop->SetBitmap(stop);
+    Stop->SetBackgroundColour(GetBackgroundColour());
+
+    controlSubSizer->Add( Stop, 0, 0, 5 );
+
     wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
 
@@ -300,13 +306,14 @@ MainFrame::MainFrame(MediaController *mediaController,
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Pause->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
+    Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onThumbRelease), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChange), nullptr, this);
     mediaCtrl->Connect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
-    mediaCtrl->Connect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
+    mediaCtrl->Connect(wxEVT_MEDIA_FINISHED, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
     songList->Connect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Connect(aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Connect(quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
@@ -350,8 +357,6 @@ void MainFrame::onShuffle(wxCommandEvent &event) {
     controller->shuffleList();
 }
 
-
-
 void MainFrame::onDelete(wxCommandEvent &event) {
 
     long selectedItem = songList -> GetFirstSelected();
@@ -375,7 +380,7 @@ void MainFrame::onPrevious(wxCommandEvent &event) {
 }
 
 void MainFrame::onPlay(wxCommandEvent &event) {
-    if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED)
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED || mediaCtrl->GetState() == wxMEDIASTATE_STOPPED)
         mediaCtrl->Play();
 }
 
@@ -406,12 +411,11 @@ void MainFrame::onSave(wxCommandEvent &event) {
 }
 
 void MainFrame::onThumbRelease(wxScrollEvent &event) {
-
-    mediaCtrl->SetVolume(Volume->GetValue() / 100.0 ) ;
+    //mediaCtrl->SetVolume(Volume->GetValue() / 100.0 );
 }
 
 void MainFrame::onScrollChange(wxScrollEvent &event) {
-    controller->showVolume();
+    mediaCtrl->SetVolume(Volume->GetValue() / 100.0 );
 }
 
 void MainFrame::onAbout(wxCommandEvent &event) {
@@ -438,7 +442,6 @@ void MainFrame::onStopped(wxMediaEvent& event){
 }
 void MainFrame::onListItemActivated(wxListEvent &event) {
     controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));
-
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
@@ -470,6 +473,7 @@ MainFrame::~MainFrame()
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Pause->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
+    Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
     save->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);

@@ -100,13 +100,13 @@ void MediaController::showVolume() {
 
 }
 
-void MediaController::changeVolume() {
+void MediaController::changeVolume(double volume) {
 
 }
 
 void MediaController::showAbout() {
     wxString msg;
-    msg.Printf( wxT("Daeum is a music player.\n\nYou can use the sliders to seek a position within the song or to\nchange the volume. You can add songs from your directories by selection Add button.\nYou can play a random song from your list and also\nyou can delete a song from your list if you don't like it."));
+    msg.Printf( wxT("Daeum is a music player.\n\nYou can use the sliders to seek a position within the song or to\nchange the volume. You can add songs from your directories with the help of the Add button.\nYou can play a random song from your list and also\nyou can delete a song from your list if you don't like it."));
     wxMessageBox(msg, wxT("About Daem Music Player"));
 }
 

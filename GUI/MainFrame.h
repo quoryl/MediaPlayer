@@ -58,6 +58,7 @@ public:
     wxButton* Play;
     wxButton* Pause;
     wxButton* Next;
+    wxButton* Stop;
     wxButton* Loop;
     wxButton* prevSession;
     wxButton* save;

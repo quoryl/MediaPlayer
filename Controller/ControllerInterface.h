@@ -24,7 +24,7 @@ public:
     virtual void nextSong() = 0;
     virtual void loop(wxMediaCtrl* mediaControl) = 0;
     virtual void showVolume() = 0;
-    virtual void changeVolume() = 0;
+    virtual void changeVolume(double volume) = 0;
     virtual void showAbout() = 0;
     virtual void save() = 0;
     virtual void load() = 0;

@@ -37,7 +37,7 @@ public:
     void playSong() override ;
     void nextSong() override ;
     void showVolume() override ;
-    void changeVolume() override ;
+    void changeVolume(double volume) override ;
     void showAbout() override ;
     void loop(wxMediaCtrl* mediaControl) override;
     void setLoop();
