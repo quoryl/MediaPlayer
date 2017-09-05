@@ -37,7 +37,7 @@ void MediaTimer::Notify() {
     if (!m_frame->IsBeingDragged)
         m_frame->mediaSlider->SetValue((long) (llTell / 1000).GetValue());
 
-    m_frame->statusBar->SetStatusText(sPosition + "/" + sDuration , 1);
+    m_frame->statusBar->SetStatusText(sPosition + "/" + sDuration , 2);
     //m_frame->statusBar->SetStatusText(sDuration, 2);
 }
 

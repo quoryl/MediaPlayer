@@ -45,6 +45,7 @@ public:
     void load() override;
     Song* getSongFromPlaylist(wxString path);
     void tellPlaylist(wxString songPath);
+    void songStopped();
     map<wxString, wxString> getMetadata(wxString *filePath) override;
 private:
     Playlist* playlist;

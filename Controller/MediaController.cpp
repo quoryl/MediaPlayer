@@ -134,12 +134,12 @@ void MediaController::loop(wxMediaCtrl *mediaControl) {
 }
 
 void MediaController::setLoop() {
-    auto tempList = playlist->getPlayList();
-    for(auto iter : tempList){
-        if(iter->getSongState() == wxMEDIASTATE_PLAYING || iter ->getSongState() == wxMEDIASTATE_PAUSED)
-            iter->setLoop(!iter->isLoop());
-    }
-
+    Song* songToLoop = playlist->getPlaying();
+    songToLoop->setLoop(!songToLoop->isLoop());
+    if(songToLoop->isLoop())
+        wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
+    else
+        wxMessageBox(wxT("Loop : off"));
 }
 void MediaController::save(){
     wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
@@ -179,7 +179,6 @@ void MediaController::load() {
 }
 
 void MediaController::tellPlaylist(wxString songPath){
-
     playlist->nowPlaying(getSongFromPlaylist(songPath));
 }
 
@@ -188,5 +187,19 @@ Song* MediaController::getSongFromPlaylist(wxString path){
     for(auto iter : playlist->getPlayList()){
         if(iter->getSongPath().IsSameAs(path))
             return iter;
+    }
+}
+
+void MediaController::songStopped(){
+    if(playlist->getPlaying()->isLoop()){
+        tellPlaylist(playlist->getPlaying()->getSongPath());
+    }
+    else {
+        if (playlist->getPlaying()->getID() + 1 < playlist->getPlayList().size()) {
+            auto nextSongID = playlist->getPlaying()->getID() + 1;
+            for (auto iter: playlist->getPlayList())
+                if (iter->getID() == nextSongID)
+                    tellPlaylist(iter->getSongPath());
+        }
     }
 }

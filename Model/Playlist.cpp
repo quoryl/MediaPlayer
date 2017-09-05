@@ -59,6 +59,7 @@ void Playlist::removeObserver(Observer *o) {
 
 void Playlist::nowPlaying(Song* s){
     s->setSongState(wxMEDIASTATE_PLAYING);
+    playing = s;
     for(auto o: playListObservers)
         o->updateSongDetails(s);
 }
@@ -86,11 +87,20 @@ void Playlist::setPlayList(const list<Song *> &playList) {
     Playlist::playList = playList;
 }
 
+Song *Playlist::getPlaying() const {
+    return playing;
+}
+
+void Playlist::setPlaying(Song *playing) {
+    Playlist::playing = playing;
+}
 Playlist::~Playlist() {
     for(auto i: playList){
         delete i;
     }
 }
+
+
 
 
 

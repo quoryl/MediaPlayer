@@ -39,7 +39,7 @@ void MainFrame::update(list<Song*>& playList){
 }
 
 void MainFrame::updateSongDetails(Song* s){
-
+    play(s->getSongPath());
     wxLongLong llLength = mediaCtrl->Length();
     int nMinutes = (int) (llLength / 60000).GetValue();
     int nSeconds = (int) ((llLength % 60000) / 1000).GetValue();
@@ -57,19 +57,14 @@ void MainFrame::updateSongDetails(Song* s){
         songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds );
     else
         songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
-    songList->SetItemTextColour(s->getID(), wxColour(97,119,136));
+
+    wxString ID;
+    ID << s->getID();
+
     statusBar->PopStatusText(0);
-    statusBar->PushStatusText(s->getTitle(), 0);
-
-    if(s->isLoop()) {
-        statusBar->PopStatusText(2);
-        statusBar->PushStatusText(wxT("Is being looped: True"), 2);
-    }
-    else{
-        statusBar->PopStatusText(2);
-        statusBar->PushStatusText(wxT("Is being looped: False"), 2);
-    }
-
+    statusBar->PushStatusText(ID, 0);
+    statusBar->PopStatusText(1);
+    statusBar->PushStatusText(s->getTitle(), 1);
 }
 
 MainFrame::MainFrame(MediaController *mediaController,
@@ -156,33 +151,20 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     //////////CollapsiblePane//////
 
-    auto paneSizer = new wxBoxSizer( wxHORIZONTAL );
-    pane = new wxCollapsiblePane(this,wxID_ANY, wxEmptyString ,wxDefaultPosition, wxSize(-1,-1));
+    auto optionsSongListSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    auto paneButtonSz = new wxBoxSizer(wxVERTICAL);
-    paneButtonSz->Add(pane,0);
+    auto optionsSizer = new wxBoxSizer(wxVERTICAL);
 
-    paneButtonSz->Add( addFile, 0, wxALIGN_LEFT|wxEXPAND, 5);
-    paneButtonSz->Add( deleteFromPlaylist, 0, wxALIGN_LEFT|wxEXPAND, 5 );
-    paneButtonSz->Add( save, 0, 0, 5);
-    paneButtonSz->Add( prevSession, 0, 0, 5);
+    optionsSizer->Add( addFile, 0, wxALIGN_LEFT|wxEXPAND, 5);
+    optionsSizer->Add( deleteFromPlaylist, 0, wxALIGN_LEFT|wxEXPAND, 5 );
+    optionsSizer->Add( save, 0, 0, 5);
+    optionsSizer->Add( prevSession, 0, 0, 5);
 
 
-    paneSizer->Add(paneButtonSz, 0);
-    paneSizer->Add(songList, 1, wxEXPAND|wxRIGHT, 5);
+    optionsSongListSizer->Add(optionsSizer, 0);
+    optionsSongListSizer->Add(songList, 1, wxEXPAND|wxRIGHT, 5);
 
-    wxWindow *win = pane->GetPane();
-    wxSizer *paneSz = new wxBoxSizer(wxVERTICAL);
-    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
-    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
-    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
-    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
-    paneSz->Add(new wxStaticText(win, wxID_ANY, "test!"), 1, wxGROW|wxALL, 2);
-
-    win->SetSizer(paneSz);
-    paneSz->SetSizeHints(win);
-
-    MainSizer->Add( paneSizer, 1, wxEXPAND|wxLEFT, 5 );
+    MainSizer->Add( optionsSongListSizer, 1, wxEXPAND|wxLEFT, 5 );
 
     /////////MediaCtrl/////////
 
@@ -292,10 +274,10 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Layout();
 
     statusBar = new wxStatusBar(this);
-    int widths[3] = {200, 120, 300}; // width status bar fiels
+    int widths[3] = {20, 250, 120}; // width status bar fiels
     statusBar -> SetFieldsCount(3, widths);
-    statusBar -> PushStatusText(wxT("You will see the title here"), 0);
-    statusBar -> PushStatusText(wxT("Is being looped: False"), 2);
+    statusBar -> PushStatusText(wxT("ID here"), 0);
+    statusBar -> PushStatusText(wxT("Title here"), 1);
     this->SetStatusBar(statusBar);
     /////////Menu//////////
 
@@ -464,11 +446,9 @@ void MainFrame::onLoaded(wxMediaEvent &event) {
 }
 
 void MainFrame::onStopped(wxMediaEvent& event){
-
+    controller->songStopped();
 }
 void MainFrame::onListItemActivated(wxListEvent &event) {
-
-    play(songList->GetItemText(event.GetIndex(), 3));
     controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));
 
 }

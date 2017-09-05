@@ -25,10 +25,13 @@ public:
     Song* getSong(long ID);//returns song with the given id from the playlist
     const list<Song *> &getPlayList() const;
     void setPlayList(const list<Song *> &playList);
-
+    Song *getPlaying() const;
+    void setPlaying(Song *playing);
     virtual ~Playlist();
 
 private:
+    Song* playing;//currently playing song
+
     list<Song*> playList;
 
     list<Song*> searchTempList; //used for searching
