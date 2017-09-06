@@ -100,6 +100,7 @@ public:
     void onListItemActivated(wxListEvent& event);
     void onListItemSelected(wxListEvent& event);
     void onKillFocus(wxFocusEvent& event);
+    void onMediaSlider(wxScrollEvent& event);
 
     //controller
     MediaController* controller;

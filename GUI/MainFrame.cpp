@@ -268,9 +268,9 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Layout();
 
     statusBar = new wxStatusBar(this);
-    int widths[3] = {20, 250, 120}; // width status bar fiels
+    int widths[3] = {20, 250, 120}; // width status bar fields
     statusBar -> SetFieldsCount(3, widths);
-    statusBar -> PushStatusText(wxT("ID here"), 0);
+    statusBar -> PushStatusText(wxT("#"), 0);
     statusBar -> PushStatusText(wxT("Title here"), 1);
     this->SetStatusBar(statusBar);
     /////////Menu//////////
@@ -320,7 +320,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Connect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Connect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
     searchBar->Connect( wxEVT_KILL_FOCUS, wxFocusEventHandler( MainFrame::onKillFocus ), nullptr, this);
-
+    mediaSlider->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
 }
 
 
@@ -430,7 +430,9 @@ void MainFrame::onBeginSeek(wxScrollEvent& event)
 }
 
 void MainFrame::onEndSeek(wxScrollEvent &event) {
+
     IsBeingDragged = false;
+
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
@@ -450,6 +452,12 @@ void MainFrame::onListItemSelected(wxListEvent &event){
 
 void MainFrame::play(wxString path){
     mediaCtrl->Load(path);
+}
+
+void MainFrame::onMediaSlider(wxScrollEvent &event){
+    if( mediaCtrl->Seek(mediaSlider->GetValue() * 1000) == wxInvalidOffset )
+        wxMessageBox(wxT("Couldn't seek!"));
+    IsBeingDragged = false;
 }
 
 MainFrame::~MainFrame()
@@ -486,6 +494,7 @@ MainFrame::~MainFrame()
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
     this->Disconnect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Disconnect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
+    mediaSlider->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
 }
 
 
