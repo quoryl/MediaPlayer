@@ -48,30 +48,9 @@ void MediaController::addFile(wxArrayString *paths) {
 void MediaController::deleteSong(wxString toDeletePath) {
 
     playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
-    wxMessageBox(wxT("Song Deleted!"));
 
 }
 
-void MediaController::shuffleList() {
-    if(playlist->getPlayList().empty()) {
-        wxMessageBox("You can't shuffle an empty playlist!");
-        return;
-    }
-    std::vector<long>indexes;
-    long seed = std::chrono::system_clock::now().time_since_epoch().count();
-    for (long i = 0; i < playlist->getPlayList().size(); i++) {
-        indexes.push_back(i);
-    }
-
-    std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
-    playlist->songChanged(&indexes);
-    for(auto i : indexes) {
-        cout<< " " << i;
-    }
-    cout<<"\n"<<endl;
-
-    indexes.clear();
-}
 
 void MediaController::prevSong() {
     auto toPlay = playlist->getPlaying();
@@ -159,6 +138,26 @@ void MediaController::setLoop() {
         wxMessageBox(wxT("To loop a song you must play it first"));
 }
 
+void MediaController::shuffleList() {
+    if(playlist->getPlayList().empty()) {
+        wxMessageBox("You can't shuffle an empty playlist!");
+        return;
+    }
+    std::vector<long>indexes;
+    long seed = std::chrono::system_clock::now().time_since_epoch().count();
+    for (long i = 0; i < playlist->getPlayList().size(); i++) {
+        indexes.push_back(i);
+    }
+
+    std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
+    playlist->songChanged(&indexes);
+    for(auto i : indexes) {
+        cout<< " " << i;
+    }
+    cout<<"\n"<<endl;
+
+    indexes.clear();
+}
 void MediaController::save(){
     wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
     if(fileOStream.IsOk()) {
@@ -201,9 +200,10 @@ void MediaController::tellPlaylist(wxString songPath){
 }
 
 Song* MediaController::getSongFromPlaylist(wxString path){
-
-    for(auto iter : playlist->getPlayList()){
-        if(iter->getSongPath().IsSameAs(path))
-            return iter;
+    if(path != wxEmptyString) {
+        for (auto iter : playlist->getPlayList()) {
+            if (iter->getSongPath().IsSameAs(path))
+                return iter;
+        }
     }
 }

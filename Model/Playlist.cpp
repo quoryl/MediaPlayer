@@ -15,8 +15,8 @@ bool Playlist::addToPlaylist(Song* song) {
 }
 
 void Playlist::deleteFromPlaylist(Song* song){
-    long elementNumber = 0;
-    if(song != nullptr) {
+    if(song != nullptr && song != playing ) {
+        long elementNumber = 0;
         playList.remove(song);
         for(auto iter: playList) {
             iter->setID(elementNumber);
@@ -24,7 +24,6 @@ void Playlist::deleteFromPlaylist(Song* song){
         }
         notifyObserver();
     }
-
 }
 
 void Playlist::searchPlaylist(wxString filterText) {
@@ -65,10 +64,11 @@ void Playlist::nowPlaying(Song* s){
 }
 
 void Playlist::songChanged(std::vector<long>* indexList){
-    auto iter = *indexList->begin();
+    auto randomSongID = *indexList->begin();
+    playing = getSong(randomSongID);
         for(auto o : playListObservers) {
-            o->play(this->getSong(iter)->getSongPath());
-            o->updateSongDetails(this->getSong(iter));
+            o->play(this->getSong(randomSongID)->getSongPath());
+            o->updateSongDetails(this->getSong(randomSongID));
         }
 }
 

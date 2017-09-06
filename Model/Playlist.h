@@ -21,7 +21,7 @@ public:
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
     void nowPlaying(Song* s);
-    void songChanged(std::vector<long>* indexList );//follows the indexes created by shuffle to play songs )in that order)
+    void songChanged(std::vector<long>* indexList );//follows the indexes created by shuffle to play songs in that order)
     Song* getSong(long ID);//returns song with the given id from the playlist
     const list<Song *> &getPlayList() const;
     void setPlayList(const list<Song *> &playList);
@@ -32,7 +32,7 @@ public:
 private:
     Song* playing = nullptr;//currently playing song
 
-    list<Song*> playList;
+    list<Song*> playList;//main playlist
 
     list<Song*> searchTempList; //used for searching
 
