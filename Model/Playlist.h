@@ -30,7 +30,7 @@ public:
     virtual ~Playlist();
 
 private:
-    Song* playing;//currently playing song
+    Song* playing = nullptr;//currently playing song
 
     list<Song*> playList;
 

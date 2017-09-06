@@ -34,18 +34,13 @@ public:
     void deleteSong(wxString toDeletePath) override ;
     void shuffleList() override ;
     void prevSong() override ;
-    void playSong() override ;
     void nextSong() override ;
-    void showVolume() override ;
-    void changeVolume(double volume) override ;
     void showAbout() override ;
-    void loop(wxMediaCtrl* mediaControl) override;
     void setLoop();
     void save() override;
     void load() override;
     Song* getSongFromPlaylist(wxString path);
     void tellPlaylist(wxString songPath);
-    void songStopped();
     map<wxString, wxString> getMetadata(wxString *filePath) override;
 private:
     Playlist* playlist;

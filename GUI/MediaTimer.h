@@ -7,6 +7,7 @@
 
 #include "wx/wx.h"
 #include "MainFrame.h"
+
 class MainFrame;
 class MediaTimer : public wxTimer {
 public:

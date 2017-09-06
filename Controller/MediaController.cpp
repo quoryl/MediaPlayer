@@ -18,7 +18,6 @@ void MediaController::addFile(wxArrayString *paths) {
 
     for(auto i: *paths) {
         auto tempList = playlist->getPlayList();
-
         wxString name = wxFileName(i).GetName();
         bool found = false;
         if (tempList.empty()) {
@@ -75,33 +74,41 @@ void MediaController::shuffleList() {
 }
 
 void MediaController::prevSong() {
-    if(playlist->getPlaying()->isLoop()){
-        tellPlaylist(playlist->getPlaying()->getSongPath());
-    }
-    else {
-        if (playlist->getPlaying()->getID() - 1 != -1) {
-            auto nextSongID = playlist->getPlaying()->getID() - 1;
-            for (auto iter: playlist->getPlayList())
-                if (iter->getID() == nextSongID)
-                    tellPlaylist(iter->getSongPath());
+    auto toPlay = playlist->getPlaying();
+    if(toPlay != nullptr) {
+        if (toPlay->isLoop()) {
+            tellPlaylist(toPlay->getSongPath());
+        }
+        else {
+            if (toPlay->getID() - 1 != -1) {
+                auto nextSongID = toPlay->getID() - 1;
+                for (auto iter: playlist->getPlayList())
+                    if (iter->getID() == nextSongID)
+                        tellPlaylist(iter->getSongPath());
+            }
         }
     }
-}
-
-void MediaController::playSong() {
-
+    else
+        wxMessageBox(wxT("There is no previous song available"));
 }
 
 void MediaController::nextSong() {
-    songStopped();
-}
-
-void MediaController::showVolume() {
-
-}
-
-void MediaController::changeVolume(double volume) {
-
+    auto toPlay = playlist->getPlaying();
+    if(toPlay != nullptr) {
+        if (toPlay->isLoop()) {
+            tellPlaylist(toPlay->getSongPath());
+        }
+        else {
+            if (toPlay->getID() + 1 < playlist->getPlayList().size()) {
+                auto nextSongID = toPlay->getID() + 1;
+                for (auto iter: playlist->getPlayList())
+                    if (iter->getID() == nextSongID)
+                        tellPlaylist(iter->getSongPath());
+            }
+        }
+    }
+    else
+        wxMessageBox(wxT("There is no next song available"));
 }
 
 void MediaController::showAbout() {
@@ -114,7 +121,7 @@ void MediaController::showAbout() {
 
 map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
     //we need a const char* for FileName constructor so we need cast path(wxString)
-   /*  using namespace TagLib;
+  /*   using namespace TagLib;
 
      const char* charPath = (filePath->mbc_str());
      FileRef TagMain{FileName(charPath)};
@@ -139,18 +146,19 @@ map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
 */
 }
 
-void MediaController::loop(wxMediaCtrl *mediaControl) {
-
-}
-
 void MediaController::setLoop() {
-    Song* songToLoop = playlist->getPlaying();
-    songToLoop->setLoop(!songToLoop->isLoop());
-    if(songToLoop->isLoop())
-        wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
+    auto songToLoop = playlist->getPlaying();
+    if(songToLoop != nullptr) {
+        songToLoop->setLoop(!songToLoop->isLoop());
+        if(songToLoop->isLoop())
+            wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
+        else
+            wxMessageBox(wxT("Loop : off"));
+    }
     else
-        wxMessageBox(wxT("Loop : off"));
+        wxMessageBox(wxT("To loop a song you must play it first"));
 }
+
 void MediaController::save(){
     wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
     if(fileOStream.IsOk()) {
@@ -197,19 +205,5 @@ Song* MediaController::getSongFromPlaylist(wxString path){
     for(auto iter : playlist->getPlayList()){
         if(iter->getSongPath().IsSameAs(path))
             return iter;
-    }
-}
-
-void MediaController::songStopped(){
-    if(playlist->getPlaying()->isLoop()){
-        tellPlaylist(playlist->getPlaying()->getSongPath());
-    }
-    else {
-        if (playlist->getPlaying()->getID() + 1 < playlist->getPlayList().size()) {
-            auto nextSongID = playlist->getPlaying()->getID() + 1;
-            for (auto iter: playlist->getPlayList())
-                if (iter->getID() == nextSongID)
-                    tellPlaylist(iter->getSongPath());
-        }
     }
 }

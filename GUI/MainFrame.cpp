@@ -440,7 +440,7 @@ void MainFrame::onLoaded(wxMediaEvent &event) {
 }
 
 void MainFrame::onStopped(wxMediaEvent& event){
-    controller->songStopped();
+    controller->nextSong();
 }
 void MainFrame::onListItemActivated(wxListEvent &event) {
     controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));

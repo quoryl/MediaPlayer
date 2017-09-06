@@ -20,11 +20,7 @@ public:
     virtual void deleteSong(wxString toDeletePath) = 0;
     virtual void shuffleList() = 0;
     virtual void prevSong() = 0;
-    virtual void playSong() = 0;
     virtual void nextSong() = 0;
-    virtual void loop(wxMediaCtrl* mediaControl) = 0;
-    virtual void showVolume() = 0;
-    virtual void changeVolume(double volume) = 0;
     virtual void showAbout() = 0;
     virtual void save() = 0;
     virtual void load() = 0;

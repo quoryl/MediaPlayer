@@ -11,7 +11,7 @@
 class DaeumApp : public wxApp {
 public:
 
-    virtual bool OnInit() override;
+    bool OnInit() override;
 
 };
 
