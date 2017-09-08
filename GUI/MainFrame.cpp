@@ -38,7 +38,7 @@ void MainFrame::update(list<Song*>& playList){
     }
 }
 
-void MainFrame::updateSongDetails(Song* s){
+void MainFrame::updateSongDetails(Song* s){ //add a prevSong parameter TODO
     play(s->getSongPath());
     wxLongLong llLength = mediaCtrl->Length();
     int nMinutes = (int) (llLength / 60000).GetValue();
