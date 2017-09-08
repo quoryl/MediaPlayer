@@ -145,6 +145,7 @@ void MediaController::shuffleList() {
     }
     std::vector<long>indexes;
     long seed = std::chrono::system_clock::now().time_since_epoch().count();
+    //the indexes are always in this order
     for (long i = 0; i < playlist->getPlayList().size(); i++) {
         indexes.push_back(i);
     }

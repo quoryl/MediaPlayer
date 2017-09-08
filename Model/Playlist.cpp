@@ -58,18 +58,15 @@ void Playlist::removeObserver(Observer *o) {
 
 void Playlist::nowPlaying(Song* s){
     s->setSongState(wxMEDIASTATE_PLAYING);
+    Song* previousSong = playing;
     playing = s;
     for(auto o: playListObservers)
-        o->updateSongDetails(s);
+        o->updateSongDetails(s, previousSong);
 }
 
 void Playlist::songChanged(std::vector<long>* indexList){
-    auto randomSongID = *indexList->begin();
-    playing = getSong(randomSongID);
-        for(auto o : playListObservers) {
-            o->play(this->getSong(randomSongID)->getSongPath());
-            o->updateSongDetails(this->getSong(randomSongID));
-        }
+    long randomSongID = *indexList->begin();
+    nowPlaying(this->getSong(randomSongID));
 }
 
 
@@ -94,6 +91,7 @@ Song *Playlist::getPlaying() const {
 void Playlist::setPlaying(Song *playing) {
     Playlist::playing = playing;
 }
+
 Playlist::~Playlist() {
     for(auto i: playList){
         delete i;

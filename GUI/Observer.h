@@ -13,7 +13,7 @@
 class Observer{
 public:
     virtual void update(std::list<Song *>& playList)=0;
-    virtual void updateSongDetails(Song* s)=0;
+    virtual void updateSongDetails(Song* s, Song* prevPlaying)=0;
     virtual void play(wxString path)=0;
 protected:
     ControllerInterface* ctrl;

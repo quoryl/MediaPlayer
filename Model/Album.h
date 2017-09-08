@@ -6,7 +6,6 @@
 #define DAEUM_ALBUM_H
 #include "wx/wx.h"
 #include "Song.h"
-#include <map>
 
 using namespace std;
 class Album {
@@ -19,9 +18,6 @@ public:
     wxString title;
     wxString genre;
 
-
-    //TODO
-    map<int, Song> mapAlbum;
 };
 
 

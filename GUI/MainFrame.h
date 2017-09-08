@@ -34,7 +34,7 @@ class MediaTimer;
 class MainFrame : public wxFrame, public Observer {
 public:
     void update(list<Song*>& playList) override;
-    void updateSongDetails(Song* s) override;
+    void updateSongDetails(Song* s, Song* prevPlaying) override;
     void play(wxString path) override;
     bool IsBeingDragged;
 

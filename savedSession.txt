@@ -3,3 +3,6 @@
 /home/azrael/Music/Honeymoon.mp3
 /home/azrael/Music/My Darling.mp3
 /home/azrael/Music/Rewind.mp3
+/home/azrael/Music/Going Crazy.mp3
+/home/azrael/Music/Today.mp3
+/home/azrael/Music/Whisper.mp3

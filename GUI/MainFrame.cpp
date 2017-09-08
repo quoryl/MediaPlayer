@@ -24,7 +24,7 @@ void MainFrame::update(list<Song*>& playList){
 
         //for the next line: I should write only nID, not initialize it with getitemcount
         //for some reason that makes an assertion fail: invalid item index
-        //index>=0 && index <itemcount FIXME
+        //index>=0 && index < itemcount FIXME
 
         listItem.SetId(nID = songList->GetItemCount());
         listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
@@ -38,7 +38,7 @@ void MainFrame::update(list<Song*>& playList){
     }
 }
 
-void MainFrame::updateSongDetails(Song* s){ //add a prevSong parameter TODO
+void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
     play(s->getSongPath());
     wxLongLong llLength = mediaCtrl->Length();
     int nMinutes = (int) (llLength / 60000).GetValue();
@@ -51,8 +51,6 @@ void MainFrame::updateSongDetails(Song* s){ //add a prevSong parameter TODO
     minutes << nMinutes;
     seconds << nSeconds;
 
-    //TODO maybe I could save the length in an array or something similar and display from there
-
     seconds=="0" ? songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds ) : songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
 
     wxString ID;
@@ -62,6 +60,13 @@ void MainFrame::updateSongDetails(Song* s){ //add a prevSong parameter TODO
     statusBar->PushStatusText(ID, 0);
     statusBar->PopStatusText(1);
     statusBar->PushStatusText(s->getTitle(), 1);
+    if(prevPlaying != nullptr)
+        songList->SetItemBackgroundColour(prevPlaying->getID(), GetBackgroundColour());
+    if(s->getSongState() == wxMEDIASTATE_PLAYING || s->getSongState() == wxMEDIASTATE_PAUSED) {
+        songList->SetItemBackgroundColour(s->getID(), wxColour(110, 140, 130));
+    }
+
+
 }
 
 MainFrame::MainFrame(MediaController *mediaController,
@@ -128,6 +133,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     deleteFromPlaylist = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
     deleteFromPlaylist->SetBitmap(deletePNG);
     deleteFromPlaylist->SetBackgroundColour(GetBackgroundColour());
+
     ////////Loads previous session(saved by the user)/////////
 
     wxBitmap loadPNG;
@@ -146,7 +152,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     save->SetBitmap(savePNG);
     save->SetBackgroundColour(GetBackgroundColour());
 
-    //////////CollapsiblePane//////
+    //////// Options Buttons and Songlist sizers //////
 
     auto optionsSongListSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -168,7 +174,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
     mediaCtrl->Enable();
 
-    //////////Slider//////////
+    //////////Media Slider//////////
     mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
 
     MainSizer->Add(mediaSlider, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
@@ -332,6 +338,7 @@ MainFrame::~MainFrame()
     if(searchTimer.IsRunning())
         searchTimer.Stop();
     delete mediaTimer;
+    mediaCtrl->Stop();
 
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
