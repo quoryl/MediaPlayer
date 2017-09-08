@@ -1,1 +1,0 @@
-GUI folder for my project's files
