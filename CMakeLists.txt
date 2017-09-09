@@ -19,6 +19,14 @@ find_package(wxWidgets COMPONENTS core base media REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(Daeum ${wxWidgets_LIBRARIES})
 
+#Needed for linking google tests to the project
+#tests is a directory containing the files downloaded from github
+
+add_subdirectory(tests)
+add_library(core ${SOURCE_FILES})
+target_link_libraries(Daeum core)
+
+
 #Link TagLib library (extracts metadata from audio files)
 
 #set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/azrael/Findcmake)
