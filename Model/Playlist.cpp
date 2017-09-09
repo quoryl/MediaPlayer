@@ -33,11 +33,13 @@ void Playlist::searchPlaylist(wxString filterText) {
             if (i->getTitle().Contains(filterText)) {
                 searchTempList.push_back(i);
             }
-        } else {
+        }
+        else {
         searchTempList.push_back(i);
         }
 
     }
+    //notify observer but with a different list
     for(auto o: playListObservers)
         o->update(searchTempList);
 }
@@ -57,6 +59,9 @@ void Playlist::removeObserver(Observer *o) {
 }
 
 void Playlist::nowPlaying(Song* s){
+    // wxMediaState is an enumeration defined by wxWidgets.
+    // You can't create a wxMediaState variable in the program (unless you change the sources ?)
+    // This means you can't pass an invalid parameter to setSongState()
     s->setSongState(wxMEDIASTATE_PLAYING);
     Song* previousSong = playing;
     playing = s;
