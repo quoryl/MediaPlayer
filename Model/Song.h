@@ -8,13 +8,11 @@
 #include <wx/mediactrl.h>
 #include "wx/wx.h"
 
-
-
 class Song {
 
 public:
 
-    Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString path = wxEmptyString);
+    explicit Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString path = wxEmptyString);
 
     long getLength() const;
 
@@ -54,8 +52,8 @@ private:
     wxString artist;
     wxString album;
     wxString songPath;
-    long ID;
-    bool loop = false;
+    long ID; 
+    bool loop;
     wxMediaState songState;
 
 

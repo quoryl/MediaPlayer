@@ -5,14 +5,28 @@
 #include "Song.h"
 
 Song::Song( wxString title, wxString artist, wxString album, int duration, wxString path):title(title),
-         artist(artist), album(album), length(duration), songPath(path){}
+         artist(artist), album(album){
+    // This two members are initialized here (not above) because they have to respect some conditions
+    // length must be not negative
+    // path must not be wxEmptyString
+    setLength(duration);
+    setSongPath(path);
+    
+    //these ones with get changed in the future
+    loop = false;
+    songState = wxMEDIASTATE_STOPPED;
+    ID = -1;
+}
 
 long Song::getLength() const {
     return length;
 }
 
 void Song::setLength(long length) {
-    Song::length = length;
+    if(length>=0)
+        Song::length = length;
+    else
+        Song::length = 0;
 }
 
 const wxString Song::getTitle() const {
@@ -54,7 +68,8 @@ const wxString Song::getSongPath(){
 }
 
 void Song::setSongPath(const wxString& sp){
-    songPath = sp;
+    if(sp != wxEmptyString)
+        songPath = sp;
 }
 
 long Song::getID() const {
@@ -62,7 +77,10 @@ long Song::getID() const {
 }
 
 void Song::setID(long ID) {
-    Song::ID = ID;
+    if(ID >=0)
+        Song::ID = ID;
+    else
+        Song::ID = -1; // not 0 because it is a valid id; at least it will be known that the invalid id is -1(the initial one)
 }
 
 wxMediaState Song::getSongState() const {
