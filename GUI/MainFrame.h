@@ -87,6 +87,7 @@ public:
     void onNext( wxCommandEvent& event ) ;
     void onStop( wxCommandEvent& event );
     void setLoopFrame(wxCommandEvent& event);
+    void onVolume(wxCommandEvent& event);
     void onPrevSession(wxCommandEvent& event);
     void onSave(wxCommandEvent &event);
     void onThumbRelease(wxScrollEvent &event) ;

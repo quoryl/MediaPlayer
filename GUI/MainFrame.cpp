@@ -248,9 +248,7 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( shuffle, 0, 0, 5 );
 
-
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
-
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
 
@@ -319,6 +317,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     save->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MainFrame::onThumbRelease), nullptr, this);
     Volume->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChange), nullptr, this);
+    volumeButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onVolume), nullptr, this);
     mediaCtrl->Connect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
     mediaCtrl->Connect(wxEVT_MEDIA_FINISHED, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
     songList->Connect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
@@ -358,6 +357,7 @@ MainFrame::~MainFrame()
     save->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onSave), nullptr, this);
     Volume->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrame::onThumbRelease), nullptr, this);
     Volume->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onScrollChange), nullptr, this);
+    volumeButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onVolume), nullptr, this);
     mediaCtrl->Disconnect(wxEVT_MEDIA_LOADED, wxMediaEventHandler(MainFrame::onLoaded), nullptr, this);
     mediaCtrl->Disconnect(wxEVT_MEDIA_STOP, wxMediaEventHandler(MainFrame::onStopped), nullptr, this);
     songList->Disconnect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
@@ -434,6 +434,29 @@ void MainFrame::onStop(wxCommandEvent &event) {
 
 void MainFrame::setLoopFrame(wxCommandEvent& event){
     controller->setLoop();
+}
+
+void MainFrame::onVolume(wxCommandEvent& event){
+    // it goes from any volume to mute and from mute to 50 %
+    auto value = Volume->GetValue();
+    if(value != 0) {
+        mediaCtrl->SetVolume(0);
+        Volume->SetValue(0);
+
+        wxBitmap mute;
+        mute.LoadFile("../ControlsPNG/mute.png", wxBITMAP_TYPE_PNG);
+        volumeButton->SetBitmap(mute);
+        volumeButton->SetBackgroundColour(GetBackgroundColour());
+    }
+    else{
+        mediaCtrl->SetVolume(0.5);
+        Volume->SetValue(50);
+
+        wxBitmap volume;
+        volume.LoadFile("../ControlsPNG/volume.png", wxBITMAP_TYPE_PNG);
+        volumeButton->SetBitmap(volume);
+        volumeButton->SetBackgroundColour(GetBackgroundColour());
+    }
 }
 
 void MainFrame::onPrevSession(wxCommandEvent &event) {
