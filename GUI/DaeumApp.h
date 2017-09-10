@@ -12,6 +12,11 @@ class DaeumApp : public wxApp {
 public:
 
     bool OnInit() override;
+    int OnExit() override;
+
+    Playlist* playlist;
+    MediaController* controller;
+    MainFrame* mainFrame;
 
 };
 
