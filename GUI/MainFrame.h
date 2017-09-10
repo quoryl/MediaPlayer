@@ -38,7 +38,7 @@ public:
     void play(wxString path) override;
     bool IsBeingDragged;
 
-    MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+    MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent = nullptr, wxWindowID id = wxID_ANY, const wxString& title = wxT("Title"),
               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ),
               long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL);
 
