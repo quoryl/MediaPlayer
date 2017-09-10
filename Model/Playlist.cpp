@@ -14,7 +14,7 @@ bool Playlist::addToPlaylist(Song* song) {
     }
 }
 
-void Playlist::deleteFromPlaylist(Song* song){
+bool Playlist::deleteFromPlaylist(Song* song){
     if(song != nullptr && song != playing ) {
         long elementNumber = 0;
         playList.remove(song);
@@ -23,7 +23,10 @@ void Playlist::deleteFromPlaylist(Song* song){
             elementNumber++;
         }
         notifyObserver();
+        return true;
     }
+    else
+        return false;
 }
 
 void Playlist::searchPlaylist(wxString filterText) {
@@ -51,7 +54,7 @@ void Playlist::notifyObserver() {
 }
 
 void Playlist::registerObserver(Observer *o) {
-     playListObservers.push_back(o);
+    playListObservers.push_back(o);
 }
 
 void Playlist::removeObserver(Observer *o) {
@@ -62,11 +65,15 @@ void Playlist::nowPlaying(Song* s){
     // wxMediaState is an enumeration defined by wxWidgets.
     // You can't create a wxMediaState variable in the program (unless you change the sources ?)
     // This means you can't pass an invalid parameter to setSongState()
-    s->setSongState(wxMEDIASTATE_PLAYING);
-    Song* previousSong = playing;
-    playing = s;
-    for(auto o: playListObservers)
-        o->updateSongDetails(s, previousSong);
+    if( s != nullptr) {
+        s->setSongState(wxMEDIASTATE_PLAYING);
+        Song *previousSong = playing;
+        playing = s;
+        for (auto o: playListObservers)
+            o->updateSongDetails(s, previousSong);
+        if (previousSong != nullptr)
+            previousSong->setSongState(wxMEDIASTATE_STOPPED);
+    }
 }
 
 void Playlist::songChanged(std::vector<long>* indexList){
@@ -76,9 +83,10 @@ void Playlist::songChanged(std::vector<long>* indexList){
 
 
 Song* Playlist::getSong(long ID){
-    for(auto iter: playList)
-        if(iter->getID() == ID)
-            return iter;
+    if(ID >= 0 && ID < playList.size())
+        for(auto iter: playList)
+            if(iter->getID() == ID)
+                return iter;
 }
 
 const list<Song *> &Playlist::getPlayList() const {
@@ -94,7 +102,16 @@ Song *Playlist::getPlaying() const {
 }
 
 void Playlist::setPlaying(Song *playing) {
-    Playlist::playing = playing;
+    if(playing != nullptr)
+        Playlist::playing = playing;
+}
+
+const list<Song *> &Playlist::getSearchTempList() const {
+    return searchTempList;
+}
+
+const list<Observer *> &Playlist::getPlayListObservers() const {
+    return playListObservers;
 }
 
 Playlist::~Playlist() {
@@ -102,6 +119,8 @@ Playlist::~Playlist() {
         delete i;
     }
 }
+
+
 
 
 

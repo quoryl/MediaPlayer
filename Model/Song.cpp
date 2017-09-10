@@ -13,8 +13,8 @@ Song::Song( wxString title, wxString artist, wxString album, int duration, wxStr
     setSongPath(path);
     
     //these ones with get changed in the future
-    loop = false;
-    songState = wxMEDIASTATE_STOPPED;
+    setLoop(false);
+    setSongState(wxMEDIASTATE_STOPPED);
     ID = -1;
 }
 
@@ -53,8 +53,6 @@ void Song::setAlbum(const wxString &album) {
     Song::album = album;
 }
 
-
-
 bool Song::isLoop() const {
     return loop;
 }
@@ -90,4 +88,3 @@ wxMediaState Song::getSongState() const {
 void Song::setSongState(wxMediaState songState) {
     Song::songState = songState;
 }
-

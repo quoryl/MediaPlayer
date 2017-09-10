@@ -5,18 +5,19 @@
 #ifndef DAEUM_PLAYLIST_H
 #define DAEUM_PLAYLIST_H
 
+#include <list>
+#include <vector>
 #include "wx/wx.h"
 #include "Subject.h"
 #include "Song.h"
-#include <list>
-#include <vector>
+
 using namespace std;
 
 class Playlist: public Subject {
 public:
     bool addToPlaylist( Song* song);
     void searchPlaylist(wxString filterText);
-    void deleteFromPlaylist(Song* song);
+    bool deleteFromPlaylist(Song* song);
     void notifyObserver() override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
@@ -27,14 +28,16 @@ public:
     void setPlayList(const list<Song *> &playList);
     Song *getPlaying() const;
     void setPlaying(Song *playing);
-    virtual ~Playlist();
+    const list<Song *> &getSearchTempList() const;
+    const list<Observer *> &getPlayListObservers() const;
 
+    virtual ~Playlist();
 private:
     Song* playing = nullptr;//currently playing song
 
     list<Song*> playList;//main playlist
 
-    list<Song*> searchTempList; //used for searching
+    list<Song*> searchTempList;//used for searching
 
     list<Observer*> playListObservers;
 };
