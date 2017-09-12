@@ -16,8 +16,8 @@ using namespace std;
 class Playlist: public Subject {
 public:
     bool addToPlaylist( Song* song);
-    void searchPlaylist(wxString filterText);
     bool deleteFromPlaylist(Song* song);
+    void searchPlaylist(wxString filterText);
     void notifyObserver() override;
     void registerObserver(Observer* o) override;
     void removeObserver(Observer* o) override;
