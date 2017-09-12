@@ -4,7 +4,7 @@ project(Daeum)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES  Model/Song.cpp Model/Song.h Model/Subject.cpp
+set(SOURCE_FILES main.cpp Model/Song.cpp Model/Song.h Model/Subject.cpp
         Model/Subject.h Model/Playlist.cpp Model/Playlist.h Model/Album.cpp
         Model/Album.h GUI/MainFrame.cpp GUI/MainFrame.h Controller/MediaController.cpp Controller/MediaController.h
         Controller/ControllerInterface.cpp Controller/ControllerInterface.h

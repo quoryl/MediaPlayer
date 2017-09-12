@@ -7,16 +7,15 @@
 
 #include "wx/wx.h"
 #include "MainFrame.h"
-
 class DaeumApp : public wxApp {
 public:
 
     bool OnInit() override;
     int OnExit() override;
 
-    Playlist* playlist;
-    MediaController* controller;
-    MainFrame* mainFrame;
+    Playlist* playlist= nullptr;
+    MediaController* controller = nullptr;
+    MainFrame* mainFrame = nullptr;
 
 };
 
