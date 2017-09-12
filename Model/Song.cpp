@@ -88,3 +88,7 @@ wxMediaState Song::getSongState() const {
 void Song::setSongState(wxMediaState songState) {
     Song::songState = songState;
 }
+
+Song::~Song() {
+    std::cout << "Deleted " << this->getTitle() << " at address: " << this << std::endl;
+}

@@ -46,6 +46,8 @@ public:
 
     void setSongState(wxMediaState songState);
 
+    virtual ~Song();
+
 private:
     long length;
     wxString title;
