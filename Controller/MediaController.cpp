@@ -15,32 +15,35 @@ void MediaController::searchItem(wxString text) {
 }
 
 void MediaController::addFile(wxArrayString *paths) {
-
+    auto tempList = playlist->getPlayList();
     for(auto i: *paths) {
-        auto tempList = playlist->getPlayList();
-        wxString name = wxFileName(i).GetName();
-        bool found = false;
-        if (tempList.empty()) {
-
-            Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
-            song->setID(playlist->getPlayList().size());
-            playlist->addToPlaylist(song); //to std::list
-
-        }
-        else {
-
-            for (auto g : tempList) {
-                if ((g->getSongPath()).IsSameAs(i)) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+        if( wxFileName(i).FileExists() ) {
+            wxString name = wxFileName(i).GetName();
+            bool found = false;
+            if (tempList.empty()) {
+                Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
                 song->setID(playlist->getPlayList().size());
                 playlist->addToPlaylist(song); //to std::list
 
             }
+            else {
 
+                for (auto g : tempList) {
+                    if ((g->getSongPath()).IsSameAs(i)) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+                    song->setID(playlist->getPlayList().size());
+                    playlist->addToPlaylist(song); //to std::list
+
+                }
+
+            }
+        }
+        else {
+            std::cerr <<"\nThe given file path: " << i << " is not valid" << std::endl;
         }
     }
 
@@ -181,10 +184,8 @@ void MediaController::load() {
         if (!text.GetFirstLine().IsSameAs(wxEmptyString)) {
             wxArrayString tmp;
             for (auto str = text.GetFirstLine(); !text.Eof(); str = text.GetNextLine()) {
-                tmp.Add(str);
-            }
-            if (text.Eof()) {
-                wxMessageBox(wxT("Loading completed! "));
+                if(wxFileName(str).FileExists())
+                    tmp.Add(str);
             }
             text.Close();
             addFile(&tmp);
@@ -201,7 +202,7 @@ void MediaController::tellPlaylist(wxString songPath){
 }
 
 Song* MediaController::getSongFromPlaylist(wxString path){
-    if(path != wxEmptyString) {
+    if(path != wxEmptyString && wxFileName(path).FileExists()) {
         for (auto iter : playlist->getPlayList()) {
             if (iter->getSongPath().IsSameAs(path))
                 return iter;
