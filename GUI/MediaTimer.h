@@ -12,7 +12,7 @@ class MainFrame;
 class MediaTimer : public wxTimer {
 public:
 
-    MediaTimer(MainFrame* frame) {m_frame = frame;}
+    MediaTimer(MainFrame* frame) : m_frame(frame){}
 
     // Called each time the timer's timeout expires
     void Notify() override;
