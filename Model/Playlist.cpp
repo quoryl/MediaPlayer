@@ -67,9 +67,10 @@ void Playlist::nowPlaying(Song* s){
     // You can't create a wxMediaState variable in the program (unless you change the sources ?)
     // This means you can't pass an invalid parameter to setSongState()
     if( s != nullptr) {
+
         s->setSongState(wxMEDIASTATE_PLAYING);
         Song *previousSong = playing;
-        playing = s;
+        setPlaying(s);
         for (auto o: playListObservers)
             o->updateSongDetails(s, previousSong);
         if (previousSong != nullptr)
@@ -78,8 +79,10 @@ void Playlist::nowPlaying(Song* s){
 }
 
 void Playlist::songChanged(std::vector<long>* indexList){
-    long randomSongID = *indexList->begin();
-    nowPlaying(this->getSong(randomSongID));
+    if(!indexList->empty()) {
+        long randomSongID = *indexList->begin();
+        nowPlaying(this->getSong(randomSongID));
+    }
 }
 
 
@@ -94,9 +97,6 @@ const list<Song *> &Playlist::getPlayList() const {
     return playList;
 }
 
-void Playlist::setPlayList(const list<Song *> &playList) {
-    Playlist::playList = playList;
-}
 
 Song *Playlist::getPlaying() const {
     return playing;
@@ -111,14 +111,11 @@ const list<Song *> &Playlist::getSearchTempList() const {
     return searchTempList;
 }
 
-const list<Observer *> &Playlist::getPlayListObservers() const {
-    return playListObservers;
-}
-
 Playlist::~Playlist() {
-    for(auto i: playList){
-        delete i;
-    }
+    if(!playList.empty())
+        for(auto i: playList){
+            delete i;
+        }
 }
 
 
