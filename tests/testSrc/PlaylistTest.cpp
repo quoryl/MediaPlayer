@@ -96,7 +96,12 @@ TEST_F(PlaylistSuite, getSong){
     ASSERT_EQ(nullptr, p->getSong(100025));
     ASSERT_EQ(nullptr, p->getSong(-99999));
 }
-
-TEST_F(PlaylistSuite, destructor){
-//TODO
+TEST_F(PlaylistSuite, getSetPlaying){
+    EXPECT_EQ(nullptr, p->getPlaying());
+    p->setPlaying(s2) ;
+    EXPECT_EQ(s2, p->getPlaying());
+    p->setPlaying(s3) ;
+    EXPECT_EQ(s3, p->getPlaying());
+    p->setPlaying(nullptr) ;
+    EXPECT_EQ(s3, p->getPlaying());
 }
