@@ -22,10 +22,9 @@ public:
     virtual void prevSong() = 0;
     virtual void nextSong() = 0;
     virtual void showAbout() = 0;
-    virtual void save() = 0;
-    virtual void load() = 0;
-
-    virtual std::map<wxString, wxString> getMetadata(wxString *filePicker) = 0;
+    virtual bool save() = 0;
+    virtual bool load() = 0;
+    virtual void tellPlaylist(wxString songPath) = 0;
 
 
 };
