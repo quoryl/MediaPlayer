@@ -49,8 +49,8 @@ void MediaController::addFile(wxArrayString *paths) {
 
 }
 void MediaController::deleteSong(wxString toDeletePath) {
-
-    playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
+    if(wxFileName(toDeletePath).FileExists() && getSongFromPlaylist(toDeletePath)!=nullptr)
+        playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
 
 }
 
@@ -70,8 +70,6 @@ void MediaController::prevSong() {
             }
         }
     }
-    else
-        wxMessageBox(wxT("There is no previous song available"));
 }
 
 void MediaController::nextSong() {
@@ -89,8 +87,6 @@ void MediaController::nextSong() {
             }
         }
     }
-    else
-        wxMessageBox(wxT("There is no next song available"));
 }
 
 void MediaController::showAbout() {
@@ -100,83 +96,56 @@ void MediaController::showAbout() {
 }
 
 
-
-map<wxString, wxString> MediaController::getMetadata(wxString *filePath) {
-    //we need a const char* for FileName constructor so we need cast path(wxString)
-  /*   using namespace TagLib;
-
-     const char* charPath = (filePath->mbc_str());
-     FileRef TagMain{FileName(charPath)};
-
-    if(!TagMain.isNull() && TagMain.tag()) {
-
-         TagLib::Tag *tag = TagMain.tag();
-
-         wstring _tagTitle = (tag->title()).toWString();
-         wstring _tagAlbum = (tag->album()).toWString();
-         wstring _tagArtist = (tag->artist()).toWString();
-
-
-         wxString tagTitle(_tagTitle);
-         wxString tagAlbum(_tagAlbum);
-         wxString tagArtist(_tagArtist);
-         std::map<wxString,wxString> metadata = {{"title", tagTitle}, {"album", tagAlbum}, {"artist", tagArtist}};
-         return metadata;
-
-    } else
-        wxMessageBox(wxT("Taglib error : FileRef is null or tag is false"));
-*/
-}
-
 void MediaController::setLoop() {
     auto songToLoop = playlist->getPlaying();
     if(songToLoop != nullptr) {
         songToLoop->setLoop(!songToLoop->isLoop());
-        if(songToLoop->isLoop())
-            wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
-        else
-            wxMessageBox(wxT("Loop : off"));
+        //if(songToLoop->isLoop())
+           // wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
+        //else
+           // wxMessageBox(wxT("Loop : off"));
     }
-    else
-        wxMessageBox(wxT("To loop a song you must play it first"));
+    //else
+       // wxMessageBox(wxT("To loop a song you must play it first"));
 }
 
 void MediaController::shuffleList() {
-    if(playlist->getPlayList().empty()) {
-        wxMessageBox("You can't shuffle an empty playlist!");
-        return;
-    }
-    std::vector<long>indexes;
-    long seed = std::chrono::system_clock::now().time_since_epoch().count();
-    //the indexes are always in this order
-    for (long i = 0; i < playlist->getPlayList().size(); i++) {
-        indexes.push_back(i);
-    }
+    if(!playlist->getPlayList().empty()) {
 
-    std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
-    playlist->songChanged(&indexes);
-    for(auto i : indexes) {
-        cout<< " " << i;
-    }
-    cout<<"\n"<<endl;
+        std::vector<long> indexes;
+        long seed = std::chrono::system_clock::now().time_since_epoch().count();
+        //the indexes are always in this order
+        for (long i = 0; i < playlist->getPlayList().size(); i++) {
+            indexes.push_back(i);
+        }
 
-    indexes.clear();
+        std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
+        playlist->songChanged(&indexes);
+        for (auto i : indexes) {
+            cout << " " << i;
+        }
+        cout << "\n" << endl;
+
+        indexes.clear();
+    }
 }
-void MediaController::save(){
+bool MediaController::save() {
     wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
-    if(fileOStream.IsOk()) {
+    if (fileOStream.IsOk() && !playlist->getPlayList().empty()) {
         wxTextOutputStream textOStream(fileOStream);
         auto tmp = playlist->getPlayList();
-        for(auto i:tmp) {
-            textOStream << i->getSongPath()<<"\n";
+        for (auto i:tmp) {
+            textOStream << i->getSongPath() << "\n";
         }
-        wxMessageBox(wxT("The content was saved !"));
+        //wxMessageBox(wxT("The content was saved !"));
+        return true;
+    } else {
+        //wxMessageBox(wxT("Error : wxFileOutputStream object is not available"));
+        return false;
     }
-    else
-        wxMessageBox(wxT("Error : wxFileOutputStream object is not available"));
 }
 
-void MediaController::load() {
+bool MediaController::load() {
 
     wxTextFile text(wxT("../savedSession.txt"));
     if(text.Exists()) {
@@ -189,16 +158,22 @@ void MediaController::load() {
             }
             text.Close();
             addFile(&tmp);
-        } else
-            wxMessageBox(wxT("There is no saved data"));
-
+            cout<<"everything okay, songs added" << endl;
+        }
+        else
+            cout << "Empty file" << endl;
+        return true;
     }
-    else
-        wxMessageBox(wxT("File not found! "));
+    else {
+        cout << "The file doesn't exist" << endl;
+        //wxMessageBox(wxT("File not found! "));
+        return false;
+    }
 }
 
 void MediaController::tellPlaylist(wxString songPath){
-    playlist->nowPlaying(getSongFromPlaylist(songPath));
+    if(wxFileName(songPath).FileExists())
+        playlist->nowPlaying(getSongFromPlaylist(songPath));
 }
 
 Song* MediaController::getSongFromPlaylist(wxString path){
@@ -208,4 +183,6 @@ Song* MediaController::getSongFromPlaylist(wxString path){
                 return iter;
         }
     }
+    else
+        return nullptr;
 }

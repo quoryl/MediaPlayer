@@ -37,14 +37,12 @@ public:
     void nextSong() override ;
     void showAbout() override ;
     void setLoop();
-    void save() override;
-    void load() override;
+    bool save() override;
+    bool load() override;
     Song* getSongFromPlaylist(wxString path);
-    void tellPlaylist(wxString songPath);
-    map<wxString, wxString> getMetadata(wxString *filePath) override;
+    void tellPlaylist(wxString songPath) override;
 private:
     Playlist* playlist;
-
 };
 
 
