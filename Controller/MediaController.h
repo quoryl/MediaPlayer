@@ -31,7 +31,7 @@ public:
 
     void searchItem(wxString text) override ;
     void addFile(wxArrayString *paths) override ;
-    void deleteSong(wxString toDeletePath) override ;
+    void deleteSong(wxArrayString toDeletePath) override ;
     void shuffleList() override ;
     void prevSong() override ;
     void nextSong() override ;

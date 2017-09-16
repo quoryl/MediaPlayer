@@ -48,10 +48,15 @@ void MediaController::addFile(wxArrayString *paths) {
     }
 
 }
-void MediaController::deleteSong(wxString toDeletePath) {
-    if(wxFileName(toDeletePath).FileExists() && getSongFromPlaylist(toDeletePath)!=nullptr)
+void MediaController::deleteSong(wxArrayString toDeletePath) {
+    for(auto iter : toDeletePath){
+        if(wxFileName(iter).FileExists() && getSongFromPlaylist(iter) != nullptr){
+            playlist->deleteFromPlaylist(getSongFromPlaylist(iter));
+        }
+    }
+    /*if(wxFileName(toDeletePath).FileExists() && getSongFromPlaylist(toDeletePath)!=nullptr)
         playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
-
+*/
 }
 
 
@@ -100,13 +105,7 @@ void MediaController::setLoop() {
     auto songToLoop = playlist->getPlaying();
     if(songToLoop != nullptr) {
         songToLoop->setLoop(!songToLoop->isLoop());
-        //if(songToLoop->isLoop())
-           // wxMessageBox(wxT("Loop : on \n To stop this process press the button again"));
-        //else
-           // wxMessageBox(wxT("Loop : off"));
     }
-    //else
-       // wxMessageBox(wxT("To loop a song you must play it first"));
 }
 
 void MediaController::shuffleList() {
@@ -130,31 +129,34 @@ void MediaController::shuffleList() {
     }
 }
 bool MediaController::save() {
-    wxFileOutputStream fileOStream(wxT("../savedSession.txt"));
+    wxFileOutputStream fileOStream(wxT("savedSession.txt"));
     if (fileOStream.IsOk() && !playlist->getPlayList().empty()) {
         wxTextOutputStream textOStream(fileOStream);
         auto tmp = playlist->getPlayList();
         for (auto i:tmp) {
             textOStream << i->getSongPath() << "\n";
         }
-        //wxMessageBox(wxT("The content was saved !"));
+        cout << "the list was saved" << endl;
         return true;
     } else {
-        //wxMessageBox(wxT("Error : wxFileOutputStream object is not available"));
+        cout << "wxFileOutputStream object not available" <<endl;
         return false;
     }
 }
 
 bool MediaController::load() {
 
-    wxTextFile text(wxT("../savedSession.txt"));
+    wxTextFile text(wxT("savedSession.txt"));
     if(text.Exists()) {
         text.Open();
+
         if (!text.GetFirstLine().IsSameAs(wxEmptyString)) {
             wxArrayString tmp;
-            for (auto str = text.GetFirstLine(); !text.Eof(); str = text.GetNextLine()) {
+            auto str = text.GetFirstLine();
+            while(!text.Eof()){
                 if(wxFileName(str).FileExists())
                     tmp.Add(str);
+                str = text.GetNextLine();
             }
             text.Close();
             addFile(&tmp);
@@ -166,7 +168,6 @@ bool MediaController::load() {
     }
     else {
         cout << "The file doesn't exist" << endl;
-        //wxMessageBox(wxT("File not found! "));
         return false;
     }
 }

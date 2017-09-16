@@ -17,7 +17,7 @@ class ControllerInterface {
 public:
     virtual void searchItem(wxString text) = 0;
     virtual void addFile(wxArrayString *paths) = 0;
-    virtual void deleteSong(wxString toDeletePath) = 0;
+    virtual void deleteSong(wxArrayString toDeletePath) = 0;
     virtual void shuffleList() = 0;
     virtual void prevSong() = 0;
     virtual void nextSong() = 0;
