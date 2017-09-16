@@ -45,12 +45,12 @@ void Playlist::searchPlaylist(wxString filterText) {
     }
     //notify observer but with a different list
     for(auto o: playListObservers)
-        o->update(searchTempList);
+        o->update(searchTempList, playing);
 }
 
 void Playlist::notifyObserver() {
     for(auto o: playListObservers)
-        o -> update(playList);
+        o->update(playList, playing);
 
 }
 
