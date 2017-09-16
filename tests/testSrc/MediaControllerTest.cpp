@@ -52,12 +52,18 @@ TEST_F(ControllerSuite, addFile){
 }
 
 TEST_F(ControllerSuite, deleteSong){
-    m->deleteSong(wxT("not a good path"));
+    wxArrayString toDelete;
+    toDelete.push_back(wxT("not a good path"));
+    m->deleteSong(toDelete);
     EXPECT_EQ(p->getPlayList().size(), 3);
-    m->deleteSong(wxT("/home/azrael/Music/Honeymoon.mp3"));
+    toDelete.clear();
+    toDelete.push_back(wxT("/home/azrael/Music/Honeymoon.mp3"));
+    m->deleteSong(toDelete);
     EXPECT_EQ(p->getPlayList().size(), 2);
-    m->deleteSong(wxT("/home/azrael/Music/Whisper.mp3"));
-    m->deleteSong((wxT("/home/azrael/Music/My Darling.mp3")));
+    toDelete.clear();
+    toDelete.push_back(wxT("/home/azrael/Music/Whisper.mp3"));
+    toDelete.push_back(wxT("/home/azrael/Music/My Darling.mp3"));
+    m->deleteSong(toDelete);
     EXPECT_TRUE(p->getPlayList().empty());
 }
 TEST_F(ControllerSuite, shuffle){
@@ -100,7 +106,8 @@ TEST_F(ControllerSuite, save){
     EXPECT_FALSE(m2.save()); 
 }
 TEST_F(ControllerSuite, load){
-    //EXPECT_TRUE(m->load());
+    EXPECT_TRUE(m->save());
+    EXPECT_TRUE(m->load());
     //the file is not empty. It should not fail FIXME
 }
 TEST_F(ControllerSuite, getSongFromPlaylist){

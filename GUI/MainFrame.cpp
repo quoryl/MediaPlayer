@@ -6,29 +6,26 @@
 #include "MainFrame.h"
 
 
-void MainFrame::update(list<Song*>& playList){
+void MainFrame::update(list<Song *> &playList, Song *playing) {
     songList->DeleteAllItems();
-    for(auto iter: playList){
-
-        wxString path = iter -> getSongPath();
+    for (auto iter: playList) {
+        wxString path = iter->getSongPath();
         wxListItem listItem;
-        listItem.SetAlign(wxLIST_FORMAT_LEFT);
 
+        listItem.SetAlign(wxLIST_FORMAT_LEFT);
         long nID = iter->getID();
         //cast an int/long to a wxString
         wxString s;
         s << nID;
-
         wxString length;
         length << iter->getLength();
 
         //for the next line: I should write only nID, not initialize it with getitemcount
         //for some reason that makes an assertion fail: invalid item index
         //index>=0 && index < itemcount FIXME
-
         listItem.SetId(nID = songList->GetItemCount());
         listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
-        listItem.SetData( iter );
+        listItem.SetData(iter);
 
         songList->InsertItem(listItem);
         songList->SetItem(nID, 0, s);
@@ -39,33 +36,35 @@ void MainFrame::update(list<Song*>& playList){
 }
 
 void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
-    play(s->getSongPath());
-    wxLongLong llLength = mediaCtrl->Length();
-    int nMinutes = (int) (llLength / 60000).GetValue();
-    int nSeconds = (int) ((llLength % 60000) / 1000).GetValue();
+    if(s!=nullptr) {
+        play(s->getSongPath());
+        wxLongLong llLength = mediaCtrl->Length();
+        int nMinutes = (int) (llLength / 60000).GetValue();
+        int nSeconds = (int) ((llLength % 60000) / 1000).GetValue();
 
-    //convertion from int to string
+        //convertion from int to string
 
-    wxString minutes;
-    wxString seconds;
-    minutes << nMinutes;
-    seconds << nSeconds;
+        wxString minutes;
+        wxString seconds;
+        minutes << nMinutes;
+        seconds << nSeconds;
 
-    seconds=="0" ? songList->SetItem(s->getID(), 2, "0"+minutes+":0"+seconds ) : songList->SetItem(s->getID(), 2, "0"+minutes+":"+seconds );
+        seconds == "0" ? songList->SetItem(s->getID(), 2, "0" + minutes + ":0" + seconds) : songList->SetItem(
+                s->getID(), 2, "0" + minutes + ":" + seconds);
 
-    wxString ID;
-    ID << s->getID();
+        wxString ID;
+        ID << s->getID();
 
-    statusBar->PopStatusText(0);
-    statusBar->PushStatusText(ID, 0);
-    statusBar->PopStatusText(1);
-    statusBar->PushStatusText(s->getTitle(), 1);
-    if(prevPlaying != nullptr)
-        songList->SetItemBackgroundColour(prevPlaying->getID(), GetBackgroundColour());
-    if(s->getSongState() == wxMEDIASTATE_PLAYING || s->getSongState() == wxMEDIASTATE_PAUSED) {
-        songList->SetItemBackgroundColour(s->getID(), wxColour(110, 140, 130));
+        statusBar->PopStatusText(0);
+        statusBar->PushStatusText(ID, 0);
+        statusBar->PopStatusText(1);
+        statusBar->PushStatusText(s->getTitle(), 1);
+        if (prevPlaying != nullptr)
+            songList->SetItemBackgroundColour(prevPlaying->getID(), GetBackgroundColour());
+        if (s->getSongState() == wxMEDIASTATE_PLAYING || s->getSongState() == wxMEDIASTATE_PAUSED) {
+            songList->SetItemBackgroundColour(s->getID(), wxColour(110, 140, 130));
+        }
     }
-
 
 }
 
@@ -401,11 +400,13 @@ void MainFrame::onShuffle(wxCommandEvent &event) {
 }
 
 void MainFrame::onDelete(wxCommandEvent &event) {
-
+    wxArrayString toDelete;
     long selectedItem = songList -> GetFirstSelected();
-    if(selectedItem != -1) {
-        controller -> deleteSong(songList -> GetItemText(selectedItem, 3));
+    while(selectedItem != -1) {
+        toDelete.push_back(songList -> GetItemText(selectedItem, 3));
+        selectedItem = songList -> GetNextSelected(selectedItem);
     }
+    controller -> deleteSong(toDelete);
 
 }
 
