@@ -35,7 +35,6 @@ public:
     void shuffleList() override ;
     void prevSong() override ;
     void nextSong() override ;
-    void showAbout() override ;
     void setLoop();
     bool save() override;
     bool load() override;

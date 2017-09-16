@@ -6,6 +6,7 @@
 #define DAEUM_MAINFRAME_H
 
 #include <memory>
+#include <chrono>
 #include "wx/config.h"
 #include <wx/wx.h>
 #include <wx/windowid.h>
@@ -66,7 +67,9 @@ public:
     wxSlider* Volume;
     wxSlider* mediaSlider;
     wxMenuBar* menuBar;
+    wxMenu* File;
     wxMenu* About;
+    wxMenu* Instructions;
     wxMenu* Quit;
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
@@ -93,6 +96,7 @@ public:
     void onThumbRelease(wxScrollEvent &event) ;
     void onScrollChange(wxScrollEvent &event);
     void onAbout(wxCommandEvent &event);
+    void onInstructions(wxCommandEvent& event);
     void onQuit(wxCommandEvent& event);
     void onBeginSeek(wxScrollEvent& event);
     void onEndSeek(wxScrollEvent& event);

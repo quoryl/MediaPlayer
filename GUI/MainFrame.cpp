@@ -2,7 +2,6 @@
 // Created by azrael on 30/07/17.
 //
 
-#include <chrono>
 #include "MainFrame.h"
 
 
@@ -280,22 +279,39 @@ MainFrame::MainFrame(MediaController *mediaController,
     statusBar -> PushStatusText(wxT("#"), 0);
     statusBar -> PushStatusText(wxT("Title here"), 1);
     this->SetStatusBar(statusBar);
+
     /////////Menu//////////
 
     menuBar = new wxMenuBar( 0 );
+
+    File = new wxMenu();
+    wxMenuItem* loadItem;
+    loadItem = new wxMenuItem( Instructions, wxID_ANY, wxString( wxT("Load") ) , wxEmptyString, wxITEM_NORMAL );
+    File->Append( loadItem );
+    wxMenuItem* saveItem;
+    saveItem = new wxMenuItem( Instructions, wxID_ANY, wxString( wxT("Save") ) , wxEmptyString, wxITEM_NORMAL );
+    File->Append( saveItem );
+    menuBar->Append( File, wxT("File") );
+
     About = new wxMenu();
     wxMenuItem* aboutItem;
     aboutItem = new wxMenuItem( About, wxID_ANY, wxString( wxT("About Daeum ...") ) , wxEmptyString, wxITEM_NORMAL );
     About->Append( aboutItem );
-
     menuBar->Append( About, wxT("About") );
+
+    Instructions = new wxMenu();
+    wxMenuItem* instructionItem;
+    instructionItem = new wxMenuItem( Instructions, wxID_ANY, wxString( wxT("Instructions...") ) , wxEmptyString, wxITEM_NORMAL );
+    Instructions->Append( instructionItem );
+    menuBar->Append( Instructions, wxT("Instructions") );
 
     Quit = new wxMenu();
     wxMenuItem* quitItem;
     quitItem = new wxMenuItem( Quit, wxID_ANY, wxString( wxT("Exit the app ...") ) , wxEmptyString, wxITEM_NORMAL );
     Quit->Append( quitItem );
-
     menuBar->Append( Quit, wxT("Quit") );
+
+
 
     this->SetMenuBar( menuBar );
 
@@ -326,6 +342,9 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList->Connect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Connect(aboutItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Connect(quitItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
+    this->Connect(instructionItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onInstructions));
+    this->Connect(loadItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onPrevSession));
+    this->Connect(saveItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onSave));
     this->Connect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Connect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
     mediaSlider->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
@@ -366,6 +385,9 @@ MainFrame::~MainFrame()
     songList->Disconnect( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( MainFrame::onListItemActivated), nullptr, this );
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onAbout));
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onQuit));
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onInstructions));
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onPrevSession));
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onSave));
     this->Disconnect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Disconnect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
     mediaSlider->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
@@ -481,7 +503,22 @@ void MainFrame::onScrollChange(wxScrollEvent &event) {
 }
 
 void MainFrame::onAbout(wxCommandEvent &event) {
-    controller->showAbout();
+    wxString msg;
+    msg.Printf( wxT("Daeum is a music player.\n\nYou can use the sliders to seek a position within the song or to\nchange the volume. You can add songs from your directories with the help of the Add button.\nYou can play a random song from your list and also\nyou can delete a song from your list if you don't like it."));
+    wxMessageBox(msg, wxT("About Daem Music Player"));
+}
+void MainFrame::onInstructions(wxCommandEvent &event){
+    wxString msg;
+    msg.Printf( wxT("Add button: Adds files from a given directory. You can add one or more files at the same time.\n\n"
+                    "Delete button: Deletes selected songs (one or more) from the playlist.\n\n"
+                    "Save button: Saves the session. If you want to find the same playlist the next time please save it first.\n\n"
+                    "Load button: Loads the previous session \n\n"
+                    "The previous, play, pause, next buttons work as you expect it to work.\n\n"
+                    "Loop button: If you click it once it will loop the song . To stop the looping process press the button again. \n\n"
+                    "Shuffle: it selects a random song from the playlist and plays it. \n\n"
+                    "Search field: searches for a song. You can search for the title or part of it. It is case sensitive"
+                ));
+    wxMessageBox(msg, wxT("How to use the player"));
 }
 void MainFrame::onQuit(wxCommandEvent &event){
     Close();
