@@ -15,35 +15,34 @@ void MediaController::searchItem(wxString text) {
 }
 
 void MediaController::addFile(wxArrayString *paths) {
-    auto tempList = playlist->getPlayList();
-    for(auto i: *paths) {
-        if( wxFileName(i).FileExists() ) {
-            wxString name = wxFileName(i).GetName();
-            bool found = false;
-            if (tempList.empty()) {
-                Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
-                song->setID(playlist->getPlayList().size());
-                playlist->addToPlaylist(song); //to std::list
-
-            }
-            else {
-
-                for (auto g : tempList) {
-                    if ((g->getSongPath()).IsSameAs(i)) {
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+    if(paths != nullptr) {
+        auto tempList = playlist->getPlayList();
+        for (auto i: *paths) {
+            if (wxFileName(i).FileExists()) {
+                wxString name = wxFileName(i).GetName();
+                bool found = false;
+                if (tempList.empty()) {
+                    Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i); // I will use all the tags for creating the song (taglib)
                     song->setID(playlist->getPlayList().size());
                     playlist->addToPlaylist(song); //to std::list
 
-                }
+                } else {
 
+                    for (auto g : tempList) {
+                        if ((g->getSongPath()).IsSameAs(i)) {
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        Song *song = new Song(name, wxT("Unknown"), wxT("Unknown"), 0, i);
+                        playlist->addToPlaylist(song); //to std::list
+
+                    }
+
+                }
+            } else {
+                std::cerr << "\nThe given file path: " << i << " is not valid" << std::endl;
             }
-        }
-        else {
-            std::cerr <<"\nThe given file path: " << i << " is not valid" << std::endl;
         }
     }
 
@@ -54,9 +53,6 @@ void MediaController::deleteSong(wxArrayString toDeletePath) {
             playlist->deleteFromPlaylist(getSongFromPlaylist(iter));
         }
     }
-    /*if(wxFileName(toDeletePath).FileExists() && getSongFromPlaylist(toDeletePath)!=nullptr)
-        playlist->deleteFromPlaylist(getSongFromPlaylist(toDeletePath));
-*/
 }
 
 

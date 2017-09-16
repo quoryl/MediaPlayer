@@ -13,7 +13,8 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
         wxListItem listItem;
 
         listItem.SetAlign(wxLIST_FORMAT_LEFT);
-        long nID = iter->getID();
+        long nID = songList->GetItemCount();
+        iter -> setID(nID);
         //cast an int/long to a wxString
         wxString s;
         s << nID;
@@ -23,7 +24,7 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
         //for the next line: I should write only nID, not initialize it with getitemcount
         //for some reason that makes an assertion fail: invalid item index
         //index>=0 && index < itemcount FIXME
-        listItem.SetId(nID = songList->GetItemCount());
+        listItem.SetId(nID);
         listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
         listItem.SetData(iter);
 
@@ -32,7 +33,10 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
         songList->SetItem(nID, 1, iter->getTitle());
         songList->SetItem(nID, 2, length);
         songList->SetItem(nID, 3, path);
+        if(playing == iter && playing != nullptr)
+            songList->SetItemBackgroundColour(playing->getID(), wxColour(110, 140, 130));
     }
+
 }
 
 void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){

@@ -16,13 +16,8 @@ bool Playlist::addToPlaylist(Song* song) {
 
 bool Playlist::deleteFromPlaylist(Song* song){
     if(song != nullptr && song != playing ) {
-        long elementNumber = 0;
         playList.remove(song);//std::list::remove calls the destructor of song. There shouldn't be any memory leaks here
         delete song;
-        for(auto iter: playList) {
-            iter->setID(elementNumber);
-            elementNumber++;
-        }
         notifyObserver();
         return true;
     }
