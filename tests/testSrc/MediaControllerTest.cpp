@@ -48,6 +48,8 @@ TEST_F(ControllerSuite, addFile){
     m->addFile(&strArray);
     EXPECT_EQ(p->getPlayList().size(), 4);
     strArray.clear();
+    m->addFile(nullptr);
+    EXPECT_EQ(p->getPlayList().size(), 4);
 
 }
 
@@ -108,14 +110,12 @@ TEST_F(ControllerSuite, save){
 TEST_F(ControllerSuite, load){
     EXPECT_TRUE(m->save());
     EXPECT_TRUE(m->load());
-    //the file is not empty. It should not fail FIXME
 }
 TEST_F(ControllerSuite, getSongFromPlaylist){
     EXPECT_EQ(s1, m->getSongFromPlaylist(wxT("/home/azrael/Music/Honeymoon.mp3")));
-    //EXPECT_EQ(nullptr, m->getSongFromPlaylist(wxT("/home/azrael/Music/Going Crazy.mp3")));
     EXPECT_EQ(nullptr, m->getSongFromPlaylist(wxT("not valid")));
     EXPECT_EQ(nullptr, m->getSongFromPlaylist(wxEmptyString));
-    EXPECT_EQ(nullptr, m->getSongFromPlaylist(wxT("0")));
+
 }
 TEST_F(ControllerSuite, tellPlaylist){
     EXPECT_EQ(nullptr, p->getPlaying());
