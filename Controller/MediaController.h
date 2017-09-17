@@ -5,13 +5,13 @@
 #ifndef DAEUM_MEDIACONTROLLER_H
 #define DAEUM_MEDIACONTROLLER_H
 
-#include <map>
+
 #include <chrono>
 #include "wx/listctrl.h"
 #include "wx/wx.h"
 
-#include <taglib/apefile.h>
-#include <taglib/fileref.h>
+#include "taglib/tag.h"
+#include "taglib/fileref.h"
 #include <wx/generic/listctrl.h>
 #include <wx/mediactrl.h>
 #include <wx/filepicker.h>
@@ -40,6 +40,7 @@ public:
     bool load() override;
     Song* getSongFromPlaylist(wxString path);
     void tellPlaylist(wxString songPath) override;
+    vector<wxString> myReader(const char* path);
 private:
     Playlist* playlist;
 };
