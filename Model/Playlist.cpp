@@ -74,9 +74,20 @@ void Playlist::nowPlaying(Song* s){
 }
 
 void Playlist::songChanged(std::vector<long>* indexList){
-    if(!indexList->empty()) {
+
+    //It makes the first song from shuffle play
+    //the playlist changes the position of all songs
+    //meaning that you will have a different configuration everytime
+    if( indexList != nullptr && !indexList->empty()) {
         long randomSongID = *indexList->begin();
         nowPlaying(this->getSong(randomSongID));
+
+        list<Song *> shuffleList;
+        for (auto iter : *indexList) {
+            shuffleList.push_back(getSong(iter));
+        }
+        this->playList = shuffleList;
+        notifyObserver();
     }
 }
 
@@ -112,13 +123,3 @@ Playlist::~Playlist() {
             delete i;
         }
 }
-
-
-
-
-
-
-
-
-
-
