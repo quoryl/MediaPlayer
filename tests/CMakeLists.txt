@@ -13,3 +13,9 @@ target_link_libraries(runAllTests gtest gtest_main core)
 find_package(wxWidgets COMPONENTS core base media REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(runAllTests ${wxWidgets_LIBRARIES})
+
+#you have to link taglib. Another bunch of undefined references otherwise
+
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/azrael/Findcmake)
+find_package(TAGLIB REQUIRED tag )
+target_link_libraries(runAllTests ${TAGLIB_LIBRARIES})

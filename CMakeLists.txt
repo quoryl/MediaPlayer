@@ -29,7 +29,7 @@ target_link_libraries(Daeum core)
 
 #Link TagLib library (extracts metadata from audio files)
 
-#set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/azrael/Findcmake)
-#find_package(TAGLIB REQUIRED tag )
-#target_link_libraries(Daeum ${TAGLIB_LIBRARIES})
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /home/azrael/Findcmake)
+find_package(TAGLIB REQUIRED tag )
+target_link_libraries(Daeum ${TAGLIB_LIBRARIES})
 
