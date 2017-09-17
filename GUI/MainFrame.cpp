@@ -17,12 +17,7 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
         //cast an int/long to a wxString
         wxString s;
         s << nID;
-        wxString length;
-        length << iter->getLength();
 
-        //for the next line: I should write only nID, not initialize it with getitemcount
-        //for some reason that makes an assertion fail: invalid item index
-        //index>=0 && index < itemcount FIXME
         listItem.SetId(nID);
         listItem.SetMask(wxLIST_MASK_DATA | wxLIST_MASK_STATE);
         listItem.SetData(iter);
@@ -30,8 +25,10 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
         songList->InsertItem(listItem);
         songList->SetItem(nID, 0, s);
         songList->SetItem(nID, 1, iter->getTitle());
-        songList->SetItem(nID, 2, length);
-        songList->SetItem(nID, 3, path);
+        songList->SetItem(nID, 2, iter->getArtist());
+        songList->SetItem(nID, 3, iter->getAlbum());
+        songList->SetItem(nID, 4, path);
+
         if(playing == iter && playing != nullptr)
             songList->SetItemBackgroundColour(playing->getID(), wxColour(110, 140, 130));
     }
@@ -41,20 +38,6 @@ void MainFrame::update(list<Song *> &playList, Song *playing) {
 void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
     if(s!=nullptr) {
         play(s->getSongPath());
-        wxLongLong llLength = mediaCtrl->Length();
-        int nMinutes = (int) (llLength / 60000).GetValue();
-        int nSeconds = (int) ((llLength % 60000) / 1000).GetValue();
-
-        //convertion from int to string
-
-        wxString minutes;
-        wxString seconds;
-        minutes << nMinutes;
-        seconds << nSeconds;
-
-        seconds == "0" ? songList->SetItem(s->getID(), 2, "0" + minutes + ":0" + seconds) : songList->SetItem(
-                s->getID(), 2, "0" + minutes + ":" + seconds);
-
         wxString ID;
         ID << s->getID();
 
@@ -113,8 +96,9 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     songList->InsertColumn(0,wxT("#"),wxLIST_FORMAT_LEFT, 25);
     songList->InsertColumn(1,wxT("Title"), wxLIST_FORMAT_LEFT, 250);
-    songList->InsertColumn(2,wxT("Length"), wxLIST_FORMAT_LEFT, 150);
-    songList->InsertColumn(3,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
+    songList->InsertColumn(2,wxT("Artist"), wxLIST_FORMAT_LEFT, 200);
+    songList->InsertColumn(3,wxT("Album"), wxLIST_FORMAT_LEFT, 200);
+    songList->InsertColumn(4,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
     songList->SetBackgroundColour(GetBackgroundColour());
 
     //////////FileDialog//////////
@@ -262,7 +246,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     volumeButton->SetBackgroundColour(GetBackgroundColour());
 
     controlSubSizer->Add( volumeButton, 0, 0, 5 );
-    //TODO connect volume button to an event handler
 
     Volume = new wxSlider( this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxSize( 100,-1 ), wxSL_HORIZONTAL );
 
@@ -429,7 +412,7 @@ void MainFrame::onDelete(wxCommandEvent &event) {
     wxArrayString toDelete;
     long selectedItem = songList -> GetFirstSelected();
     while(selectedItem != -1) {
-        toDelete.push_back(songList -> GetItemText(selectedItem, 3));
+        toDelete.push_back(songList -> GetItemText(selectedItem, 4));
         selectedItem = songList -> GetNextSelected(selectedItem);
     }
     controller -> deleteSong(toDelete);
@@ -542,11 +525,10 @@ void MainFrame::onStopped(wxMediaEvent& event){
     controller->nextSong();
 }
 void MainFrame::onListItemActivated(wxListEvent &event) {
-    controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 3));
+    controller->tellPlaylist(songList->GetItemText(event.GetIndex(), 4));
 }
 
 void MainFrame::onListItemSelected(wxListEvent &event){
-
 }
 
 void MainFrame::play(wxString path){
