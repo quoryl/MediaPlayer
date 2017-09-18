@@ -58,7 +58,7 @@ MainFrame::MainFrame(MediaController *mediaController,
                      Playlist *pList, wxWindow *parent, wxWindowID id,const wxString &title, const wxPoint &pos,
                      const wxSize &size, long style): wxFrame( parent, id, title, pos, size, style )
 {
-
+    SetIcon(wxIcon(wxT("../ControlsPNG/musicPlayerIcon.xpm")));
     playlist = pList;
     MainFrame::controller = mediaController;
     pList->registerObserver(this);
@@ -180,23 +180,15 @@ MainFrame::MainFrame(MediaController *mediaController,
     Previous->SetBackgroundColour(GetBackgroundColour());
     controlSubSizer->Add( Previous, 0, 0, 5 );
 
-    wxBitmap play;
-    play.LoadFile("../ControlsPNG/play-button.png", wxBITMAP_TYPE_PNG);
+    playBitmap.LoadFile("../ControlsPNG/play-button.png", wxBITMAP_TYPE_PNG);
 
-    Play = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, play.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
-    Play->SetBitmap(play);
+    Play = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, playBitmap.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
+    Play->SetBitmap(playBitmap);
     Play->SetBackgroundColour(GetBackgroundColour());
 
     controlSubSizer->Add( Play, 0, 0, 5 );
 
-    wxBitmap pause;
-    pause.LoadFile("../ControlsPNG/pause.png", wxBITMAP_TYPE_PNG);
-
-    Pause = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, pause.GetSize(),wxTRANSPARENT_WINDOW|wxBORDER_NONE );
-    Pause->SetBitmap(pause);
-    Pause->SetBackgroundColour(GetBackgroundColour());
-
-    controlSubSizer->Add( Pause, 0, 0, 5 );
+    pauseBitmap.LoadFile("../ControlsPNG/pause.png", wxBITMAP_TYPE_PNG);
 
     wxBitmap next;
     next.LoadFile("../ControlsPNG/next.png", wxBITMAP_TYPE_PNG);
@@ -312,7 +304,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     Previous->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ), nullptr, this );
     Play->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
     Next->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
-    Pause->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
     prevSession->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onPrevSession), nullptr, this);
@@ -354,7 +345,6 @@ MainFrame::~MainFrame()
     shuffle->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::onShuffle), nullptr, this);
     Previous->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPrevious ),nullptr, this );
     Play->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPlay ), nullptr, this );
-    Pause->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onPause ), nullptr, this );
     Next->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onNext ), nullptr, this );
     Stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onStop ), nullptr, this );
     Loop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::setLoopFrame), nullptr, this);
@@ -424,14 +414,14 @@ void MainFrame::onPrevious(wxCommandEvent &event) {
 }
 
 void MainFrame::onPlay(wxCommandEvent &event) {
-    if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED || mediaCtrl->GetState() == wxMEDIASTATE_STOPPED)
-        mediaCtrl->Play();
-}
-
-void MainFrame::onPause(wxCommandEvent& event){
-
-    if(mediaCtrl->GetState() == wxMEDIASTATE_PLAYING)
+    if(mediaCtrl->GetState() == wxMEDIASTATE_PLAYING){
         mediaCtrl->Pause();
+        Play->SetBitmap(playBitmap);
+    }
+    else{
+        mediaCtrl->Play();
+        Play->SetBitmap(pauseBitmap);
+    }
 }
 
 void MainFrame::onNext(wxCommandEvent &event) {
@@ -440,6 +430,7 @@ void MainFrame::onNext(wxCommandEvent &event) {
 
 void MainFrame::onStop(wxCommandEvent &event) {
     mediaCtrl -> Stop();
+    Play->SetBitmap(playBitmap);
 }
 
 void MainFrame::setLoopFrame(wxCommandEvent& event){
@@ -532,8 +523,11 @@ void MainFrame::onListItemSelected(wxListEvent &event){
 }
 
 void MainFrame::play(wxString path){
-    if(path != wxEmptyString)
+    if(path != wxEmptyString){
         mediaCtrl->Load(path);
+        Play->SetBitmap(pauseBitmap);
+    }
+
 }
 
 void MainFrame::onMediaSlider(wxScrollEvent &event){

@@ -57,7 +57,6 @@ public:
     wxMediaCtrl* mediaCtrl;
     wxButton* Previous;
     wxButton* Play;
-    wxButton* Pause;
     wxButton* Next;
     wxButton* Stop;
     wxButton* Loop;
@@ -74,7 +73,8 @@ public:
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
     wxTimer searchTimer;
-
+    wxBitmap pauseBitmap;
+    wxBitmap playBitmap;
 
 
     void onSearch( wxCommandEvent& event );
@@ -86,7 +86,6 @@ public:
     void onShuffle(wxCommandEvent &event);
     void onPrevious( wxCommandEvent& event );
     void onPlay( wxCommandEvent& event );
-    void onPause( wxCommandEvent& event );
     void onNext( wxCommandEvent& event ) ;
     void onStop( wxCommandEvent& event );
     void setLoopFrame(wxCommandEvent& event);
