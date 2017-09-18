@@ -73,11 +73,11 @@ public:
     MediaTimer* mediaTimer;
     wxStatusBar* statusBar;
     wxTimer searchTimer;
+    //these bitmaps are declared here because they are used in more than one method of the class
     wxBitmap pauseBitmap;
     wxBitmap playBitmap;
     wxBitmap mute;
     wxBitmap volume;
-    wxBitmap loop;
 
 
     void onSearch( wxCommandEvent& event );

@@ -113,10 +113,6 @@ void MediaController::shuffleList() {
 
         std::shuffle(indexes.begin(), indexes.end(), std::default_random_engine(seed));
         playlist->songChanged(&indexes);
-        for (auto i : indexes) {
-            cout << " " << i;
-        }
-        cout << "\n" << endl;
 
         indexes.clear();
     }

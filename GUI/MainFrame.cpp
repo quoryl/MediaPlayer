@@ -215,6 +215,7 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Stop, 0, 0, 5 );
 
+    wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
 
     Loop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, loop.GetSize(), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
