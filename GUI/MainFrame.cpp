@@ -45,11 +45,18 @@ void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
         statusBar->PushStatusText(ID, 0);
         statusBar->PopStatusText(1);
         statusBar->PushStatusText(s->getTitle(), 1);
+
         if (prevPlaying != nullptr)
             songList->SetItemBackgroundColour(prevPlaying->getID(), GetBackgroundColour());
         if (s->getSongState() == wxMEDIASTATE_PLAYING || s->getSongState() == wxMEDIASTATE_PAUSED) {
             songList->SetItemBackgroundColour(s->getID(), wxColour(110, 140, 130));
         }
+        if(s->isLoop()) {
+            Loop->SetBackgroundColour(wxColour(110, 140, 130));
+        }
+        else
+            Loop->SetBackgroundColour(GetBackgroundColour());
+
     }
 
 }
@@ -208,7 +215,6 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Stop, 0, 0, 5 );
 
-    wxBitmap loop;
     loop.LoadFile("../ControlsPNG/repeat.png", wxBITMAP_TYPE_PNG);
 
     Loop = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, loop.GetSize(), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
@@ -230,7 +236,6 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
 
-    wxBitmap volume;
     volume.LoadFile("../ControlsPNG/volume.png", wxBITMAP_TYPE_PNG);
 
     volumeButton = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, volume.GetSize(), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
@@ -238,6 +243,8 @@ MainFrame::MainFrame(MediaController *mediaController,
     volumeButton->SetBackgroundColour(GetBackgroundColour());
 
     controlSubSizer->Add( volumeButton, 0, 0, 5 );
+
+    mute.LoadFile("../ControlsPNG/mute.png", wxBITMAP_TYPE_PNG);
 
     Volume = new wxSlider( this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxSize( 100,-1 ), wxSL_HORIZONTAL );
 
@@ -435,6 +442,10 @@ void MainFrame::onStop(wxCommandEvent &event) {
 
 void MainFrame::setLoopFrame(wxCommandEvent& event){
     controller->setLoop();
+    if(Loop->GetBackgroundColour() == wxColour(110, 140, 130))
+        Loop->SetBackgroundColour(GetBackgroundColour());
+    else
+        Loop->SetBackgroundColour(wxColour(110, 140, 130));
 }
 
 void MainFrame::onVolume(wxCommandEvent& event){
@@ -443,20 +454,12 @@ void MainFrame::onVolume(wxCommandEvent& event){
     if(value != 0) {
         mediaCtrl->SetVolume(0);
         Volume->SetValue(0);
-
-        wxBitmap mute;
-        mute.LoadFile("../ControlsPNG/mute.png", wxBITMAP_TYPE_PNG);
         volumeButton->SetBitmap(mute);
-        volumeButton->SetBackgroundColour(GetBackgroundColour());
     }
     else{
         mediaCtrl->SetVolume(0.5);
         Volume->SetValue(50);
-
-        wxBitmap volume;
-        volume.LoadFile("../ControlsPNG/volume.png", wxBITMAP_TYPE_PNG);
         volumeButton->SetBitmap(volume);
-        volumeButton->SetBackgroundColour(GetBackgroundColour());
     }
 }
 

@@ -75,6 +75,9 @@ public:
     wxTimer searchTimer;
     wxBitmap pauseBitmap;
     wxBitmap playBitmap;
+    wxBitmap mute;
+    wxBitmap volume;
+    wxBitmap loop;
 
 
     void onSearch( wxCommandEvent& event );
