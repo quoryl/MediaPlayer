@@ -5,6 +5,7 @@
 #include "TagReader.h"
 
 TagReader::TagReader(const char* songPath) {
+    file = static_cast<wxString>(songPath);
     tagFile = new TagLib::FileRef(songPath);
     if(!tagFile->isNull() && tagFile->tag() != nullptr){
         myTag = tagFile->tag();
@@ -48,6 +49,65 @@ wxString TagReader::getGenre() {
     }
     else
         return wxEmptyString;
+}
+
+//obtained from:
+//http://rajeevandlinux.wordpress.com/2012/04/24/extract-album-art-from-mp3-files-using-taglib-in-c/
+bool TagReader::processAlbumArt()
+{
+    //delete tagFile;
+    const char *IdPicture = "APIC";
+
+    TagLib::MPEG::File mpegFile(file.fn_str());
+    TagLib::ID3v2::Tag *id3v2tag = mpegFile.ID3v2Tag();
+    TagLib::ID3v2::FrameList Frame ;
+    TagLib::ID3v2::AttachedPictureFrame *PicFrame ;
+    char *SrcImage ;
+    unsigned long Size ;
+
+    if ( id3v2tag )
+    {
+        std::fstream outFile("AlbumArt.png", ios::out | ios::binary);
+        Frame = id3v2tag->frameListMap()[IdPicture] ;
+        if (!Frame.isEmpty() )
+        {
+            for(TagLib::ID3v2::FrameList::ConstIterator it = Frame.begin(); it != Frame.end(); ++it)
+            {
+                PicFrame = (TagLib::ID3v2::AttachedPictureFrame *)(*it) ;
+                {
+                    Size = PicFrame->picture().size() ;
+
+                    SrcImage = new char[Size];
+
+                    if ( SrcImage )
+                    {
+                        memcpy ( SrcImage, PicFrame->picture().data(), Size ) ;
+
+                        outFile.write(SrcImage, Size);
+
+                        outFile.close();
+                        delete SrcImage;
+                        return true;
+                    }
+
+                }
+            }
+        }
+    }
+    return false;
+}
+wxBitmap TagReader::getAlbumArt()
+{
+    wxBitmap bmp;
+
+    if(processAlbumArt()){
+        bmp = wxBitmap( wxT("AlbumArt.png"), wxBITMAP_TYPE_ANY);
+        return bmp;
+    }
+    else
+        bmp = wxBitmap( wxT("NoAlbumArt.png"), wxBITMAP_TYPE_ANY);
+
+    return bmp;
 }
 
 TagReader::~TagReader() {
