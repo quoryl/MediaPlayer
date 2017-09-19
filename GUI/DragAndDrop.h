@@ -16,8 +16,6 @@ class DragAndDrop : public wxFileDropTarget {
 
 public:
     explicit DragAndDrop(MainFrame* frame);
-    bool IsFormatSupported(wxString fileName);
-
 
 private:
     MainFrame* target;
