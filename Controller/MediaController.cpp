@@ -20,12 +20,10 @@ void MediaController::addFile(wxArrayString *paths) {
         for (auto i: *paths) {
             if (wxFileName(i).FileExists()) {
                 auto metapath = static_cast<const char*>(i);
-                vector<wxString> metadata = myReader(metapath);
-                if(metadata.empty())
-                    return;
+                TagReader tags(metapath);
                 bool found = false;
                 if (tempList.empty()) {
-                    Song *song = new Song(metadata[0], metadata[1], metadata[2], 0, i);
+                    Song *song = new Song(tags.getTitle(), tags.getArtist(), tags.getAlbum(), 0, i);
                     song->setID(playlist->getPlayList().size());
                     playlist->addToPlaylist(song); //to std::list
 
@@ -37,7 +35,7 @@ void MediaController::addFile(wxArrayString *paths) {
                         }
                     }
                     if (!found) {
-                        Song *song = new Song(metadata[0], metadata[1], metadata[2], 0, i);
+                        Song *song = new Song(tags.getTitle(), tags.getArtist(), tags.getAlbum(), 0, i);
                         playlist->addToPlaylist(song); //to std::list
 
                     }
@@ -175,24 +173,4 @@ Song* MediaController::getSongFromPlaylist(wxString path){
     }
     else
         return nullptr;
-}
-
-vector<wxString> MediaController::myReader(const char* path) {
-
-    vector<wxString> metadata;
-    TagLib::FileRef f(path);
-
-    if(!f.isNull() && f.tag() != nullptr){
-        TagLib::Tag* myTag=f.tag();
-        wxString title = myTag->title().to8Bit(true);
-        wxString artist = myTag->artist().to8Bit(true);
-        wxString album = myTag->album().to8Bit(true);
-
-        metadata.push_back(title);
-        metadata.push_back(artist);
-        metadata.push_back(album);
-
-        return metadata;
-    }
-
 }

@@ -10,8 +10,6 @@
 #include "wx/listctrl.h"
 #include "wx/wx.h"
 
-#include "taglib/tag.h"
-#include "taglib/fileref.h"
 #include <wx/generic/listctrl.h>
 #include <wx/mediactrl.h>
 #include <wx/filepicker.h>
@@ -23,6 +21,7 @@
 #include "ControllerInterface.h"
 #include "../Model/Song.h"
 #include "../GUI/MainFrame.h"
+#include "TagReader.h"
 
 class MediaController: public ControllerInterface{
 
@@ -40,7 +39,6 @@ public:
     bool load() override;
     Song* getSongFromPlaylist(wxString path);
     void tellPlaylist(wxString songPath) override;
-    vector<wxString> myReader(const char* path);
 private:
     Playlist* playlist;
 };
