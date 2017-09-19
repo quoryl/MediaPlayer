@@ -6,7 +6,7 @@
 
 using namespace std;
 
-wxIMPLEMENT_APP(DaeumApp);
+//wxIMPLEMENT_APP(DaeumApp);
 
 bool DaeumApp::OnInit() {
     playlist = new Playlist;
