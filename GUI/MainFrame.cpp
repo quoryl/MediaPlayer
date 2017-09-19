@@ -121,7 +121,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList->SetBackgroundColour(GetBackgroundColour());
 
     //////////FileDialog//////////
-
+    // file dialog searches only for mp3 files ( only one wildcard )
     loadFile = new wxFileDialog( this,wxT("Select a file"),wxT("/home/azrael/Music"),wxEmptyString, wxT("*.mp3"),wxFD_MULTIPLE|wxFD_OPEN);
 
     //addFile = new wxButton( this, wxID_ANY, wxT("Add"), wxDefaultPosition, wxSize(205,-1), 0 );
@@ -269,7 +269,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Layout();
 
     statusBar = new wxStatusBar(this);
-    int widths[3] = {20, 250, 120}; // width status bar fields
+    int widths[3] = {30, 180, 120}; // width status bar fields
     statusBar -> SetFieldsCount(3, widths);
     statusBar -> PushStatusText(wxT("#"), 0);
     statusBar -> PushStatusText(wxT("Title here"), 1);
@@ -494,12 +494,12 @@ void MainFrame::onScrollChange(wxScrollEvent &event) {
 
 void MainFrame::onAbout(wxCommandEvent &event) {
     wxString msg;
-    msg.Printf( wxT("Daeum is a music player.\n\nYou can use the sliders to seek a position within the song or to\nchange the volume. You can add songs from your directories with the help of the Add button.\nYou can play a random song from your list and also\nyou can delete a song from your list if you don't like it."));
+    msg.Printf( wxT("Daeum is a music player.\n\n It plays the songs you  add with the help of the add button or by drag & drop.\n It supports mp3 (wav also work)"));
     wxMessageBox(msg, wxT("About Daem Music Player"));
 }
 void MainFrame::onInstructions(wxCommandEvent &event){
     wxString msg;
-    msg.Printf( wxT("Add button: Adds files from a given directory. You can add one or more files at the same time.\n\n"
+    msg.Printf( wxT("Add button: Adds files from a given directory. You can add one or more files at the same time. You will find only mp3 files in your folder.\n If you want wav files just drag and drop them in the playlist.\n\n"
                     "Delete button: Deletes selected songs (one or more) from the playlist.\n\n"
                     "Save button: Saves the session. If you want to find the same playlist the next time please save it first.\n\n"
                     "Load button: Loads the previous session \n\n"

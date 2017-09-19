@@ -9,7 +9,7 @@ DragAndDrop::DragAndDrop(MainFrame* frame) : target(frame), ctrl(target->control
 bool DragAndDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &files) {
     wxArrayString validPaths;
     for(auto iter : files){
-        if(wxFileName(iter).GetExt() == "mp3"){
+        if(wxFileName(iter).GetExt() == "mp3" || wxFileName(iter).GetExt() == "wav"){
             validPaths.push_back(iter);
         }
         else
