@@ -78,7 +78,11 @@ public:
     wxBitmap playBitmap;
     wxBitmap mute;
     wxBitmap volume;
-
+    wxBoxSizer* MainSizer;
+    wxBoxSizer* optionsSongListSizer;
+    wxBoxSizer* controlSubSizer;
+    wxBoxSizer* cmdSubSizer;
+    wxStaticBitmap* art = nullptr;
 
     void onSearch( wxCommandEvent& event );
     void onTextUpdated(wxCommandEvent& event);

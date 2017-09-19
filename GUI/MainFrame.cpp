@@ -57,6 +57,22 @@ void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
         else
             Loop->SetBackgroundColour(GetBackgroundColour());
 
+        if( art!=nullptr )
+            cmdSubSizer->Detach(art);
+
+        wxString albert = s->getSongPath();
+        auto charPath = static_cast<const char*>(albert);
+        TagReader tags(charPath);
+        //The conversion was done because wxBitmap does not have a rescale method ( the difference with wxImage )
+        auto imageAlbum = tags.getAlbumArt().ConvertToImage();
+        imageAlbum.Rescale(80,80);
+        wxBitmap fromImage(imageAlbum);
+
+        art = new wxStaticBitmap(this, wxID_ANY, fromImage, wxDefaultPosition);
+        cmdSubSizer->Add(art, 0, 0);
+        MainSizer->Layout();
+
+
     }
 
 }
@@ -85,20 +101,11 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-    wxBoxSizer* MainSizer;
     MainSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxBoxSizer* cmdSubSizer;
     cmdSubSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    ////////// SearchBar///////////
-
-    searchBar = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,30 ), wxTE_PROCESS_ENTER );
-#ifndef __WXMAC__
-    searchBar->ShowSearchButton( true );
-#endif
-    searchBar->ShowCancelButton( true );
-    cmdSubSizer->Add( searchBar, 0, wxALL, 5 );
+    cmdSubSizer->Add( 2, 0, 1, wxEXPAND, 5 );
 
     //////////SearchTimer////////////
 
@@ -119,6 +126,15 @@ MainFrame::MainFrame(MediaController *mediaController,
     songList->InsertColumn(3,wxT("Album"), wxLIST_FORMAT_LEFT, 200);
     songList->InsertColumn(4,wxT("Location"), wxLIST_FORMAT_LEFT, 400);
     songList->SetBackgroundColour(GetBackgroundColour());
+
+    ////////// SearchBar///////////
+
+    searchBar = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,30 ), wxTE_PROCESS_ENTER );
+    #ifndef __WXMAC__
+        searchBar->ShowSearchButton( true );
+    #endif
+    searchBar->ShowCancelButton( true );
+
 
     //////////FileDialog//////////
     // file dialog searches only for mp3 files ( only one wildcard )
@@ -159,18 +175,20 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     //////// Options Buttons and Songlist sizers //////
 
-    auto optionsSongListSizer = new wxBoxSizer( wxHORIZONTAL );
+    optionsSongListSizer = new wxBoxSizer( wxHORIZONTAL );
 
     auto optionsSizer = new wxBoxSizer(wxVERTICAL);
-
+    optionsSizer->Add( searchBar, 0, wxALL, 5 );
     optionsSizer->Add( addFile, 0, wxALIGN_LEFT|wxEXPAND, 5);
     optionsSizer->Add( deleteFromPlaylist, 0, wxALIGN_LEFT|wxEXPAND, 5 );
     optionsSizer->Add( save, 0, 0, 5);
     optionsSizer->Add( prevSession, 0, 0, 5);
 
 
+
     optionsSongListSizer->Add(optionsSizer, 0);
     optionsSongListSizer->Add(songList, 1, wxEXPAND|wxRIGHT, 5);
+
 
     MainSizer->Add( optionsSongListSizer, 1, wxEXPAND|wxLEFT, 5 );
 
@@ -186,7 +204,7 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     /////////Controls////////
 
-    wxBoxSizer* controlSubSizer;
+
     controlSubSizer = new wxBoxSizer( wxHORIZONTAL );
 
     mediaTimer = new MediaTimer(this);
