@@ -184,10 +184,11 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     MainSizer->Add(mediaSlider, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
 
+    /////////Controls////////
+
     wxBoxSizer* controlSubSizer;
     controlSubSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    /////////Controls////////
     mediaTimer = new MediaTimer(this);
     mediaTimer->Start(500);
 
@@ -264,7 +265,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     controlSubSizer->Add( Volume, 0, 0, 5 );
 
     MainSizer->Add( controlSubSizer, 0, wxALL, 5 );
-
     this->SetSizer( MainSizer );
     this->Layout();
 
