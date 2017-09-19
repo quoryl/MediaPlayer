@@ -19,7 +19,6 @@
 #include <wx/mediactrl.h>
 #include <wx/listbase.h>
 #include <wx/filepicker.h>
-#include <wx/collpane.h>
 
 
 #include "Observer.h"
@@ -27,6 +26,7 @@
 #include "../Model/Playlist.h"
 #include "../Controller/MediaController.h"
 #include "MediaTimer.h"
+#include "DragAndDrop.h"
 
 using namespace std;
 class MediaController;

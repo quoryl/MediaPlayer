@@ -70,8 +70,20 @@ MainFrame::MainFrame(MediaController *mediaController,
     MainFrame::controller = mediaController;
     pList->registerObserver(this);
 
-    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
+    /*
+        You should associate wxDropTarget and wxWindow calling SetDropTarget:
+            wxWindow *pWindow = GetTopWindow();
+            pWindow->SetDropTarget(new MyDropTarget);
+
+        The object created passed to SetDropTarget becomes the propriety of wxWindow
+        and will be deleted with the window (or when you call SetDropTarget next
+        time). You can always break the association by calling SetDropTarget(NULL).
+
+    */
+    SetDropTarget(new DragAndDrop(this));
+
+    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
     wxBoxSizer* MainSizer;
     MainSizer = new wxBoxSizer( wxVERTICAL );
