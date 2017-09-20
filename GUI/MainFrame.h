@@ -19,7 +19,7 @@
 #include <wx/mediactrl.h>
 #include <wx/listbase.h>
 #include <wx/filepicker.h>
-
+#include <wx/statline.h>
 
 #include "Observer.h"
 #include "../Model/Song.h"
@@ -37,7 +37,6 @@ public:
     void update(list<Song *> &playList, Song *playing) override;
     void updateSongDetails(Song* s, Song* prevPlaying) override;
     void play(wxString path) override;
-    bool IsBeingDragged;
 
     MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent = nullptr, wxWindowID id = wxID_ANY, const wxString& title = wxT("Title"),
               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ),
@@ -48,12 +47,11 @@ public:
 
 
     wxSearchCtrl* searchBar;
-    wxStaticText* addText;
     wxFileDialog* loadFile;
     wxButton* addFile;
     wxButton* deleteFromPlaylist;
     wxButton* shuffle;
-    wxListView* songList;
+    wxListView* songList;// the GUI part of the Playlist
     wxMediaCtrl* mediaCtrl;
     wxButton* Previous;
     wxButton* Play;
@@ -66,11 +64,11 @@ public:
     wxSlider* Volume;
     wxSlider* mediaSlider;
     wxMenuBar* menuBar;
-    wxMenu* File;
+    wxMenu* File;//Menu option containing save and load methods
     wxMenu* About;
     wxMenu* Instructions;
     wxMenu* Quit;
-    MediaTimer* mediaTimer;
+    MediaTimer* mediaTimer; //updates the mediaSlider with the position of the playing song
     wxStatusBar* statusBar;
     wxTimer searchTimer;
     //these bitmaps are declared here because they are used in more than one method of the class
@@ -78,11 +76,20 @@ public:
     wxBitmap playBitmap;
     wxBitmap mute;
     wxBitmap volume;
-    wxBoxSizer* MainSizer;
-    wxBoxSizer* optionsSongListSizer;
-    wxBoxSizer* controlSubSizer;
-    wxBoxSizer* cmdSubSizer;
-    wxStaticBitmap* art = nullptr;
+    wxBoxSizer* MainSizer;// the main sizer containing cmdSubSizer and optionsSongListSizer
+    wxBoxSizer* optionsSongListSizer;//center horizontal containing optionsSizer and songList
+    wxBoxSizer* controlSubSizer;//horizontal containing the control buttons and labelsSizer
+    wxBoxSizer* cmdSubSizer;//horizontal containing the album art and sliderControls sizer
+    wxBoxSizer* sliderControls;//vertical containing the slider and controlSubSizer
+    wxBoxSizer* labelsSizer;//contains the details about the song (wxStaticText)
+    wxStaticBitmap* art = nullptr;//the album art from TagReader class
+    wxStaticText* titleLabel;
+    wxStaticText* lengthLabel;
+    wxStaticText* artistLabel;
+    wxStaticText* albumLabel;
+    wxStaticText* genreLabel;
+    bool IsBeingDragged;
+
 
     void onSearch( wxCommandEvent& event );
     void onTextUpdated(wxCommandEvent& event);
@@ -108,9 +115,9 @@ public:
     void onEndSeek(wxScrollEvent& event);
     void onLoaded(wxMediaEvent& event);
     void onStopped(wxMediaEvent& event);
-    void onListItemActivated(wxListEvent& event);
+    void onListItemActivated(wxListEvent& event);//plays the selected song
     void onListItemSelected(wxListEvent& event);
-    void onKillFocus(wxFocusEvent& event);
+    void onKillFocus(wxFocusEvent& event); // it stops searchTimer
     void onMediaSlider(wxScrollEvent& event);
 
     //controller

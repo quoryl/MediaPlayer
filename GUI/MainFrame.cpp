@@ -65,12 +65,17 @@ void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
         TagReader tags(charPath);
         //The conversion was done because wxBitmap does not have a rescale method ( the difference with wxImage )
         auto imageAlbum = tags.getAlbumArt().ConvertToImage();
-        imageAlbum.Rescale(80,80);
+        imageAlbum.Rescale(170,170);
         wxBitmap fromImage(imageAlbum);
 
         art = new wxStaticBitmap(this, wxID_ANY, fromImage, wxDefaultPosition);
-        cmdSubSizer->Add(art, 0, 0);
+        cmdSubSizer->Prepend(art, 0, wxALL);
         MainSizer->Layout();
+
+        titleLabel->SetLabel(wxT("Title: ") + tags.getTitle());
+        artistLabel->SetLabel(wxT("Artist: ") + tags.getArtist());
+        albumLabel->SetLabel(wxT("Album: ") + tags.getAlbum());
+        genreLabel->SetLabel(wxT("Genre: ") + tags.getGenre());
 
 
     }
@@ -105,17 +110,21 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     cmdSubSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    cmdSubSizer->Add( 2, 0, 1, wxEXPAND, 5 );
+    sliderControls = new wxBoxSizer( wxVERTICAL );
+
+    cmdSubSizer->Add(sliderControls, 1, wxEXPAND|wxALL, 5);
+
+    ////////Media Slider//////////
+
+    mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
+
+    sliderControls->Add(mediaSlider, 0, wxALL|wxEXPAND, 5 );
+
+    MainSizer->Add( cmdSubSizer, 0, wxEXPAND|wxALL, 5);
 
     //////////SearchTimer////////////
 
     searchTimer.SetOwner(this, wxID_ANY);
-
-    cmdSubSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-    cmdSubSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-    MainSizer->Add( cmdSubSizer, 0, wxALL, 5 );
 
     //////////ListCtrl//////////
 
@@ -173,22 +182,28 @@ MainFrame::MainFrame(MediaController *mediaController,
     save->SetBitmap(savePNG);
     save->SetBackgroundColour(GetBackgroundColour());
 
+    auto centerLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+
+    MainSizer->Add(centerLine, 0, wxEXPAND|wxALL, 5);
     //////// Options Buttons and Songlist sizers //////
 
     optionsSongListSizer = new wxBoxSizer( wxHORIZONTAL );
 
     auto optionsSizer = new wxBoxSizer(wxVERTICAL);
+    auto firstSeparatorLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+    auto secondSeparatorLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+    auto thirdSeparatorLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
     optionsSizer->Add( searchBar, 0, wxALL, 5 );
+    optionsSizer->Add( firstSeparatorLine, 0, wxEXPAND | wxALL, 5 );
     optionsSizer->Add( addFile, 0, wxALIGN_LEFT|wxEXPAND, 5);
     optionsSizer->Add( deleteFromPlaylist, 0, wxALIGN_LEFT|wxEXPAND, 5 );
+    optionsSizer->Add( secondSeparatorLine, 0, wxEXPAND | wxALL, 5 );
     optionsSizer->Add( save, 0, 0, 5);
     optionsSizer->Add( prevSession, 0, 0, 5);
-
-
+    optionsSizer->Add( thirdSeparatorLine, 0, wxEXPAND | wxALL, 5 );
 
     optionsSongListSizer->Add(optionsSizer, 0);
     optionsSongListSizer->Add(songList, 1, wxEXPAND|wxRIGHT, 5);
-
 
     MainSizer->Add( optionsSongListSizer, 1, wxEXPAND|wxLEFT, 5 );
 
@@ -197,13 +212,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     mediaCtrl = new wxMediaCtrl( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
     mediaCtrl->Enable();
 
-    //////////Media Slider//////////
-    mediaSlider = new wxSlider(this, wxID_ANY, 0, 0, 10);
-
-    MainSizer->Add(mediaSlider, 0, wxEXPAND|wxLEFT|wxRIGHT, 5 );
-
     /////////Controls////////
-
 
     controlSubSizer = new wxBoxSizer( wxHORIZONTAL );
 
@@ -264,10 +273,6 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( shuffle, 0, 0, 5 );
 
-    controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
-
-    controlSubSizer->Add( 10, 0, 1, wxEXPAND, 5 );
-
     volume.LoadFile("../ControlsPNG/volume.png", wxBITMAP_TYPE_PNG);
 
     volumeButton = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, volume.GetSize(), wxTRANSPARENT_WINDOW|wxBORDER_NONE );
@@ -282,7 +287,38 @@ MainFrame::MainFrame(MediaController *mediaController,
 
     controlSubSizer->Add( Volume, 0, 0, 5 );
 
-    MainSizer->Add( controlSubSizer, 0, wxALL, 5 );
+    //////////////LabelsSizer/////////////
+
+
+    labelsSizer = new wxBoxSizer( wxVERTICAL );
+
+    titleLabel = new wxStaticText( this, wxID_ANY, wxT("Title : To be Defined"), wxDefaultPosition, wxDefaultSize, 0 );
+    titleLabel->Wrap( -1 );
+    labelsSizer->Add( titleLabel, 0, wxALL, 5 );
+
+    lengthLabel = new wxStaticText( this, wxID_ANY, wxT("Length : To be Defined"), wxDefaultPosition, wxDefaultSize, 0 );
+    lengthLabel->Wrap( -1 );
+    labelsSizer->Add( lengthLabel, 0, wxALL, 5 );
+
+    artistLabel = new wxStaticText( this, wxID_ANY, wxT("Artist : To be Defined"), wxDefaultPosition, wxDefaultSize, 0 );
+    artistLabel->Wrap( -1 );
+    labelsSizer->Add( artistLabel, 0, wxALL, 5 );
+
+    albumLabel = new wxStaticText( this, wxID_ANY, wxT("Album : To be Defined"), wxDefaultPosition, wxDefaultSize, 0 );
+    albumLabel->Wrap( -1 );
+    labelsSizer->Add( albumLabel, 0, wxALL, 5 );
+
+    genreLabel = new wxStaticText( this, wxID_ANY, wxT("Genre : To be Defined"), wxDefaultPosition, wxDefaultSize, 0 );
+    genreLabel->Wrap( -1 );
+    labelsSizer->Add( genreLabel, 0, wxALL, 5 );
+    labelsSizer->SetMinSize(250,-1);
+
+    auto separatorLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+    controlSubSizer->Prepend( separatorLine, 0, wxEXPAND | wxALL, 5 );
+
+    controlSubSizer->Prepend( labelsSizer, 1, wxALL, 5 );
+
+    sliderControls->Add( controlSubSizer, 0, wxALL, 5 );
     this->SetSizer( MainSizer );
     this->Layout();
 

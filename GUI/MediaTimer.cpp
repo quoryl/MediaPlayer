@@ -39,5 +39,6 @@ void MediaTimer::Notify() {
         m_frame->mediaSlider->SetValue((static_cast<long>((llTell / 1000).GetValue())));
 
     m_frame->statusBar->SetStatusText(sPosition + "/" + sDuration , 2);
+    m_frame->lengthLabel->SetLabel(wxT("Position: ") + sPosition + "/" + sDuration );
 }
 
