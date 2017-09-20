@@ -5,14 +5,14 @@
 #include "TagReader.h"
 
 TagReader::TagReader(const char* songPath) {
-    file = static_cast<wxString>(songPath);
-    tagFile = new TagLib::FileRef(songPath);
-    if(!tagFile->isNull() && tagFile->tag() != nullptr){
-        myTag = tagFile->tag();
+    if(songPath != nullptr) {
+        tagFile = new TagLib::FileRef(songPath);
+        if (!tagFile->isNull() && tagFile->tag() != nullptr) {
+            myTag = tagFile->tag();
+            file = static_cast<wxString>(songPath);
+        } else
+            cout << "The file is not valid or it doesn't have tags" << endl;
     }
-    else
-        cout << "The file is not valid or it doesn't have tags" << endl;
-
 }
 
 wxString TagReader::getTitle() {
@@ -55,7 +55,6 @@ wxString TagReader::getGenre() {
 //http://rajeevandlinux.wordpress.com/2012/04/24/extract-album-art-from-mp3-files-using-taglib-in-c/
 bool TagReader::processAlbumArt()
 {
-    //delete tagFile;
     const char *IdPicture = "APIC";
 
     TagLib::MPEG::File mpegFile(file.fn_str());
