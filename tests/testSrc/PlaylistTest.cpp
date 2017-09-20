@@ -51,9 +51,6 @@ TEST_F(PlaylistSuite, search){
     ASSERT_EQ(p->getSearchTempList(), p->getPlayList());
 
 }
-TEST_F(PlaylistSuite, registerRemoveObserver){
-    //TODO mainframe gives an error
-}
 
 TEST_F(PlaylistSuite, nowPlaying){
     p->nowPlaying(s1);

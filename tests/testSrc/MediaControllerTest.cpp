@@ -108,8 +108,12 @@ TEST_F(ControllerSuite, save){
     EXPECT_FALSE(m2.save()); 
 }
 TEST_F(ControllerSuite, load){
-    EXPECT_TRUE(m->save());
+    m->save();
+    //load will return always true, even if we don't save the playlist
+    //(unless the savedSession file doesn't exist)
+    //in that case it returns false
     EXPECT_TRUE(m->load());
+
 }
 TEST_F(ControllerSuite, getSongFromPlaylist){
     EXPECT_EQ(s1, m->getSongFromPlaylist(wxT("/home/azrael/Music/Honeymoon.mp3")));
