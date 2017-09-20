@@ -11,7 +11,7 @@ using namespace std;
 bool DaeumApp::OnInit() {
     playlist = new Playlist;
     controller = new MediaController(playlist);
-    mainFrame = new MainFrame(controller, playlist, nullptr, wxID_ANY, wxT("musicPlayer"), wxDefaultPosition,wxSize(1000, 400));
+    mainFrame = new MainFrame(controller, playlist, nullptr, wxID_ANY, wxT("musicPlayer"), wxDefaultPosition,wxSize(1000, 500));
     mainFrame->Show(true);
     //this way the program automatically loads the last saved playlist the user can do it manually as well)
     controller->load();
