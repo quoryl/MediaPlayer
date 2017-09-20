@@ -24,7 +24,6 @@ void MediaController::addFile(wxArrayString *paths) {
                 bool found = false;
                 if (tempList.empty()) {
                     Song *song = new Song(tags.getTitle(), tags.getArtist(), tags.getAlbum(), 0, i);
-                    song->setID(playlist->getPlayList().size());
                     playlist->addToPlaylist(song); //to std::list
 
                 } else {
