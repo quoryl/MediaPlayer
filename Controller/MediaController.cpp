@@ -124,8 +124,9 @@ bool MediaController::save() {
         }
         cout << "the list was saved" << endl;
         return true;
-    } else {
-        cout << "wxFileOutputStream object not available" <<endl;
+    }
+    else {
+        cout << "wxFileOutputStream object not available or the playlist is empty" <<endl;
         return false;
     }
 }

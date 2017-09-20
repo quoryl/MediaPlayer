@@ -88,7 +88,7 @@ public:
     wxStaticText* artistLabel;
     wxStaticText* albumLabel;
     wxStaticText* genreLabel;
-    bool IsBeingDragged;
+    bool IsBeingDragged = false;
 
 
     void onSearch( wxCommandEvent& event );
