@@ -21,7 +21,6 @@ bool DaeumApp::OnInit() {
 int DaeumApp::OnExit() {
     delete playlist;
     delete controller;
-    // it gives a SIGSEGV; I suppose that since it is derived from wxFrame wxWidgets takes care of this class
-    //delete mainFrame;
+    mainFrame->Destroy();//it is advised to use destroy not delete on wxWindow
 
 }

@@ -105,7 +105,7 @@ MainFrame::MainFrame(MediaController *mediaController,
     SetDropTarget(new DragAndDrop(this));
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-
+    this -> SetBackgroundColour(wxColour(210, 179, 190));
     MainSizer = new wxBoxSizer( wxVERTICAL );
 
     cmdSubSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -183,7 +183,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     save->SetBackgroundColour(GetBackgroundColour());
 
     auto centerLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-
     MainSizer->Add(centerLine, 0, wxEXPAND|wxALL, 5);
     //////// Options Buttons and Songlist sizers //////
 
@@ -408,6 +407,7 @@ MainFrame::~MainFrame()
         searchTimer.Stop();
     delete mediaTimer;
     mediaCtrl->Stop();
+    loadFile->Destroy(); //special case. wxWidgets doesn't take care of wxDialog
 
     // Disconnect Events
     searchBar->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( MainFrame::onSearch ), nullptr, this );
