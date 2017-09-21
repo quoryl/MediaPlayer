@@ -38,6 +38,8 @@ TEST_F(PlaylistSuite, addDelete){
     ASSERT_EQ(4, p->getPlayList().size());
     ASSERT_TRUE(p->deleteFromPlaylist(s));
     ASSERT_EQ(3, p->getPlayList().size());
+    ASSERT_FALSE(p->addToPlaylist(nullptr));
+    ASSERT_FALSE(p->deleteFromPlaylist(nullptr));
 }
 
 TEST_F(PlaylistSuite, search){
@@ -60,6 +62,8 @@ TEST_F(PlaylistSuite, nowPlaying){
     ASSERT_EQ(wxMEDIASTATE_PLAYING, s3->getSongState());
     ASSERT_EQ(s3, p->getPlaying());
     ASSERT_EQ(wxMEDIASTATE_STOPPED, s1->getSongState());
+    p->nowPlaying(nullptr);
+    ASSERT_EQ(s3, p->getPlaying());
 
 }
 
@@ -82,6 +86,9 @@ TEST_F(PlaylistSuite, songChanged){
     p->songChanged(&indexes);
     ASSERT_EQ(s1, p->getPlaying());
     indexes.clear();
+
+    p->songChanged(nullptr);
+    EXPECT_EQ(s1, p->getPlaying());
 
 }
 
