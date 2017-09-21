@@ -9,7 +9,7 @@ set(SOURCE_FILES main.cpp Model/Song.cpp Model/Song.h Model/Subject.cpp
          GUI/MainFrame.cpp GUI/MainFrame.h Controller/MediaController.cpp Controller/MediaController.h
         Controller/ControllerInterface.cpp Controller/ControllerInterface.h
         GUI/MediaTimer.cpp GUI/MediaTimer.h GUI/DaeumApp.cpp GUI/DaeumApp.h GUI/Observer.cpp GUI/Observer.h
-        savedSession.txt GUI/DragAndDrop.cpp GUI/DragAndDrop.h Controller/TagReader.cpp Controller/TagReader.h)
+        GUI/DragAndDrop.cpp GUI/DragAndDrop.h Controller/TagReader.cpp Controller/TagReader.h)
 
 add_executable(Daeum ${SOURCE_FILES})
 
