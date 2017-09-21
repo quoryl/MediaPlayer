@@ -32,7 +32,7 @@ public:
     bool processAlbumArt();
     wxBitmap getAlbumArt();
 private:
-    wxString file;
+    wxString file = wxEmptyString;
     TagLib::FileRef* tagFile = nullptr;
     TagLib::Tag* myTag = nullptr;
 

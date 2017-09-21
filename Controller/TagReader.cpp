@@ -13,6 +13,8 @@ TagReader::TagReader(const char* songPath) {
         } else
             cout << "The file is not valid or it doesn't have tags" << endl;
     }
+    else
+        cout << "The path is null" << endl;
 }
 
 wxString TagReader::getTitle() {
@@ -53,42 +55,40 @@ wxString TagReader::getGenre() {
 
 //obtained from:
 //http://rajeevandlinux.wordpress.com/2012/04/24/extract-album-art-from-mp3-files-using-taglib-in-c/
-bool TagReader::processAlbumArt()
-{
-    const char *IdPicture = "APIC";
+bool TagReader::processAlbumArt(){
+    if(file != wxEmptyString) {
 
-    TagLib::MPEG::File mpegFile(file.fn_str());
-    TagLib::ID3v2::Tag *id3v2tag = mpegFile.ID3v2Tag();
-    TagLib::ID3v2::FrameList Frame ;
-    TagLib::ID3v2::AttachedPictureFrame *PicFrame ;
-    char *SrcImage ;
-    unsigned long Size ;
+        const char *IdPicture = "APIC";
 
-    if ( id3v2tag )
-    {
-        std::fstream outFile("AlbumArt.png", ios::out | ios::binary);
-        Frame = id3v2tag->frameListMap()[IdPicture] ;
-        if (!Frame.isEmpty() )
-        {
-            for(TagLib::ID3v2::FrameList::ConstIterator it = Frame.begin(); it != Frame.end(); ++it)
-            {
-                PicFrame = (TagLib::ID3v2::AttachedPictureFrame *)(*it) ;
-                {
-                    Size = PicFrame->picture().size() ;
+        TagLib::MPEG::File mpegFile(file.fn_str());
+        TagLib::ID3v2::Tag *id3v2tag = mpegFile.ID3v2Tag();
+        TagLib::ID3v2::FrameList Frame;
+        TagLib::ID3v2::AttachedPictureFrame *PicFrame;
+        char *SrcImage;
+        unsigned long Size;
 
-                    SrcImage = new char[Size];
-
-                    if ( SrcImage )
+        if (id3v2tag) {
+            std::fstream outFile("AlbumArt.png", ios::out | ios::binary);
+            Frame = id3v2tag->frameListMap()[IdPicture];
+            if (!Frame.isEmpty()) {
+                for (TagLib::ID3v2::FrameList::ConstIterator it = Frame.begin(); it != Frame.end(); ++it) {
+                    PicFrame = (TagLib::ID3v2::AttachedPictureFrame *) (*it);
                     {
-                        memcpy ( SrcImage, PicFrame->picture().data(), Size ) ;
+                        Size = PicFrame->picture().size();
 
-                        outFile.write(SrcImage, Size);
+                        SrcImage = new char[Size];
 
-                        outFile.close();
-                        delete SrcImage;
-                        return true;
+                        if (SrcImage) {
+                            memcpy(SrcImage, PicFrame->picture().data(), Size);
+
+                            outFile.write(SrcImage, Size);
+
+                            outFile.close();
+                            delete SrcImage;
+                            return true;
+                        }
+
                     }
-
                 }
             }
         }
@@ -101,7 +101,6 @@ wxBitmap TagReader::getAlbumArt()
 
     if(processAlbumArt()){
         bmp = wxBitmap( wxT("AlbumArt.png"), wxBITMAP_TYPE_ANY);
-        return bmp;
     }
     else
         bmp = wxBitmap( wxT("../ControlsPNG/NoAlbumArt.png"), wxBITMAP_TYPE_ANY);
@@ -110,5 +109,6 @@ wxBitmap TagReader::getAlbumArt()
 }
 
 TagReader::~TagReader() {
-    delete tagFile;
+    if(tagFile!=nullptr)
+        delete tagFile;
 }
