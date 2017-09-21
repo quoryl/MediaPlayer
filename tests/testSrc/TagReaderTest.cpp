@@ -108,5 +108,14 @@ TEST_F(TagReaderSuite, getAlbumArt){
 
     EXPECT_TRUE(compareImages(noArtImg, dinoImage));
 
+    wxImage emptyPathImage = tags3->getAlbumArt().ConvertToImage();
+
+    EXPECT_TRUE(compareImages(noArtImg, emptyPathImage));
+
+    TagReader nullPath(nullptr);
+    wxImage nullPathImage = nullPath.getAlbumArt().ConvertToImage();
+
+    EXPECT_TRUE(compareImages(noArtImg, emptyPathImage));
+
 
 }
