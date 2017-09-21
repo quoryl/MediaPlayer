@@ -25,11 +25,9 @@ public:
     void songChanged(std::vector<long>* indexList );//follows the indexes created by shuffle to play songs in that order)
     Song* getSong(long ID);//returns song with the given id from the playlist
     const list<Song *> &getPlayList() const;
-    void setPlayList(const list<Song *> &playList);
     Song *getPlaying() const;
     void setPlaying(Song *playing);
     const list<Song *> &getSearchTempList() const;
-    const list<Observer *> &getPlayListObservers() const;
 
     virtual ~Playlist();
 private:

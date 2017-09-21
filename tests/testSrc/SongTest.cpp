@@ -55,8 +55,8 @@ TEST_F(SongSuite, Constructor){
 TEST_F( SongSuite, positiveIDs){
     s1->setID(-10);
     ASSERT_EQ(-1, s1->getID());
-    s1->setID(1000);
-    ASSERT_EQ(1000, s1->getID());
+    s1->setID(100000000000);
+    ASSERT_EQ(100000000000, s1->getID());
     s1->setID(0);
     ASSERT_EQ(0, s1->getID());
 }

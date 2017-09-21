@@ -112,7 +112,6 @@ public:
     void onInstructions(wxCommandEvent& event);
     void onQuit(wxCommandEvent& event);
     void onBeginSeek(wxScrollEvent& event);
-    void onEndSeek(wxScrollEvent& event);
     void onLoaded(wxMediaEvent& event);
     void onStopped(wxMediaEvent& event);
     void onListItemActivated(wxListEvent& event);//plays the selected song

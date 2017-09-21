@@ -155,7 +155,9 @@ MainFrame::MainFrame(MediaController *mediaController,
     addFile = new wxButton( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(205,35), wxTRANSPARENT_WINDOW|wxBORDER_NONE);
     addFile->SetBitmap(addPNG);
     addFile->SetBackgroundColour(GetBackgroundColour());
+
     /////////DeleteItem/////////
+
     wxBitmap deletePNG;
     deletePNG.LoadFile("../ControlsPNG/delete_text.png", wxBITMAP_TYPE_PNG);
 
@@ -393,7 +395,8 @@ MainFrame::MainFrame(MediaController *mediaController,
     this->Connect(saveItem->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onSave));
     this->Connect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Connect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
-    mediaSlider->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
+    mediaSlider->Connect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
+    mediaSlider->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onBeginSeek), nullptr, this);
 }
 
 MainFrame::~MainFrame()
@@ -436,7 +439,9 @@ MainFrame::~MainFrame()
     this->Disconnect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::onSave));
     this->Disconnect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainFrame::onTimer ) );
     songList->Disconnect( wxEVT_LIST_ITEM_SELECTED, wxListEventHandler( MainFrame::onListItemSelected ), nullptr, this );
-    mediaSlider->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
+    mediaSlider->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MainFrame::onMediaSlider), nullptr, this);
+    mediaSlider->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MainFrame::onBeginSeek), nullptr, this);
+
 }
 
 void MainFrame::onSearch(wxCommandEvent &event) {
@@ -491,10 +496,11 @@ void MainFrame::onPlay(wxCommandEvent &event) {
         mediaCtrl->Pause();
         Play->SetBitmap(playBitmap);
     }
-    else{
-        mediaCtrl->Play();
-        Play->SetBitmap(pauseBitmap);
-    }
+    else //otherwise it will change the bitmap even if there aren't any playing songs
+        if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED){
+            mediaCtrl->Play();
+            Play->SetBitmap(pauseBitmap);
+        }
 }
 
 void MainFrame::onNext(wxCommandEvent &event) {
@@ -569,12 +575,6 @@ void MainFrame::onQuit(wxCommandEvent &event){
 void MainFrame::onBeginSeek(wxScrollEvent& event)
 {
     IsBeingDragged = true;
-}
-
-void MainFrame::onEndSeek(wxScrollEvent &event) {
-
-    IsBeingDragged = false;
-
 }
 
 void MainFrame::onLoaded(wxMediaEvent &event) {
