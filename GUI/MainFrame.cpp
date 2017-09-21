@@ -105,7 +105,6 @@ MainFrame::MainFrame(MediaController *mediaController,
     SetDropTarget(new DragAndDrop(this));
 
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-    this -> SetBackgroundColour(wxColour(210, 179, 190));
     MainSizer = new wxBoxSizer( wxVERTICAL );
 
     cmdSubSizer = new wxBoxSizer( wxHORIZONTAL );

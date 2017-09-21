@@ -104,7 +104,7 @@ wxBitmap TagReader::getAlbumArt()
         return bmp;
     }
     else
-        bmp = wxBitmap( wxT("NoAlbumArt.png"), wxBITMAP_TYPE_ANY);
+        bmp = wxBitmap( wxT("../ControlsPNG/NoAlbumArt.png"), wxBITMAP_TYPE_ANY);
 
     return bmp;
 }
