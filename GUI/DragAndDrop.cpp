@@ -4,7 +4,7 @@
 
 
 #include "DragAndDrop.h"
-DragAndDrop::DragAndDrop(MainFrame* frame) : target(frame), ctrl(target->controller){}
+DragAndDrop::DragAndDrop(MainFrame* frame) : target(frame){}
 
 bool DragAndDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &files) {
     wxArrayString validPaths;
@@ -15,6 +15,10 @@ bool DragAndDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &files) 
         else
             cout << "the file is not supported" << endl;
     }
-    ctrl->addFile(&validPaths);
+    if(target != nullptr && target->controller != nullptr) {
+        target->controller->addFile(&validPaths);
+        return true;
+    }
+    return false;
 }
 

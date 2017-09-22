@@ -18,8 +18,7 @@ public:
     explicit DragAndDrop(MainFrame* frame);
 
 private:
-    MainFrame* target;
-    MediaController* ctrl;
+    MainFrame* target;//used for SetDropTarget()
     bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& files) override;
 
 
