@@ -3,9 +3,8 @@
 //
 
 #include "Song.h"
-
-Song::Song( wxString title, wxString artist, wxString album, int duration, wxString path):title(title),
-         artist(artist), album(album){
+Song::Song( wxString title,  wxBitmap albumArt, wxString artist, wxString album, int duration, wxString path, wxString genre):title(title),
+         artist(artist), album(album), genre(genre), albumArt(albumArt){
     // This two members are initialized here (not above) because they have to respect some conditions
     // length must be not negative
     // path must not be wxEmptyString
@@ -91,4 +90,12 @@ void Song::setSongState(wxMediaState songState) {
 
 Song::~Song() {
     std::cout << "Deleted " << this->getTitle() << " at address: " << this << std::endl;
+}
+
+const wxString &Song::getGenre() const {
+    return genre;
+}
+
+const wxBitmap &Song::getAlbumArt() const {
+    return albumArt;
 }

@@ -36,7 +36,7 @@ class MainFrame : public wxFrame, public Observer {
 public:
     void update(list<Song *> &playList, Song *playing) override;
     void updateSongDetails(Song* s, Song* prevPlaying) override;
-    void play(wxString path) override;
+    void play(wxString path);
 
     MainFrame(MediaController *mediaController, Playlist *pList, wxWindow* parent = nullptr, wxWindowID id = wxID_ANY, const wxString& title = wxT("Title"),
               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,373 ),
@@ -121,9 +121,9 @@ public:
 
     //controller
     MediaController* controller;
-    Song* song;
+
     //model
-    Playlist* playlist;
+    Playlist* playlist; //used for registering and removing mainFrame as observer
 
 
 

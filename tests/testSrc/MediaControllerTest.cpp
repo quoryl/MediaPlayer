@@ -14,9 +14,11 @@ public:
     Song* s3;
     void SetUp() override{
         p = new Playlist;
-        s1 = new Song(wxT("Title1"), wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/Honeymoon.mp3"));
-        s2 = new Song(wxT("Title2"), wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/Whisper.mp3"));
-        s3 = new Song(wxT("Title3"), wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/My Darling.mp3"));
+        wxBitmap noArt;
+        noArt.LoadFile(wxT("/home/azrael/CLionProjects/MediaPlayer/ControlsPNG/NoAlbumArt.png"));
+        s1 = new Song(wxT("Title1"), noArt,  wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/Honeymoon.mp3"));
+        s2 = new Song(wxT("Title2"),noArt, wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/Whisper.mp3"));
+        s3 = new Song(wxT("Title3"),noArt, wxT("Unknown"), wxT("Unknown"), 0, wxT("/home/azrael/Music/My Darling.mp3"));
         s1->setID(0);
         s2->setID(1);
         s3->setID(2);

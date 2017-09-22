@@ -14,15 +14,18 @@ public:
     void SetUp()override{
         p = new Playlist;
 
-        s1 = new Song(wxT("Title1"));
+        wxBitmap noArt;
+        noArt.LoadFile(wxT("/home/azrael/CLionProjects/MediaPlayer/ControlsPNG/NoAlbumArt.png"));
+
+        s1 = new Song(wxT("Title1"), noArt);
         s1->setID(0);
         p->addToPlaylist(s1);
 
-        s2 = new Song(wxT("Title2"));
+        s2 = new Song(wxT("Title2"), noArt);
         s2->setID(1);
         p->addToPlaylist(s2);
 
-        s3 = new Song(wxT("Title3"));
+        s3 = new Song(wxT("Title3"), noArt);
         s3->setID(2);
         p->addToPlaylist(s3);
 
@@ -33,7 +36,9 @@ public:
 };
 
 TEST_F(PlaylistSuite, addDelete){
-    Song* s = new Song(wxT("titlu"));
+    wxBitmap noArt;
+    noArt.LoadFile(wxT("/home/azrael/CLionProjects/MediaPlayer/ControlsPNG/NoAlbumArt.png"));
+    Song* s = new Song(wxT("titlu"), noArt );
     ASSERT_TRUE(p->addToPlaylist(s));
     ASSERT_EQ(4, p->getPlayList().size());
     ASSERT_TRUE(p->deleteFromPlaylist(s));

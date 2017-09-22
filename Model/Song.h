@@ -12,7 +12,7 @@ class Song {
 
 public:
 
-    explicit Song(wxString title, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString path = wxEmptyString);
+    explicit Song(wxString title,  wxBitmap albumArt, wxString artist = wxT("Unknown"), wxString album = wxT("Unknown"), int duration = 0, wxString path = wxEmptyString,  wxString genre = wxT("Unknown"));
 
     long getLength() const;
 
@@ -46,10 +46,14 @@ public:
 
     void setSongState(wxMediaState songState);
 
+    const wxString &getGenre() const;
+
+    const wxBitmap &getAlbumArt() const;
+
     virtual ~Song();
 
 private:
-    long length;
+    long length = 0;
     wxString title;
     wxString artist;
     wxString album;
@@ -57,8 +61,8 @@ private:
     long ID; 
     bool loop;
     wxMediaState songState;
-
-
+    wxString genre;
+    wxBitmap albumArt ;
 
 };
 

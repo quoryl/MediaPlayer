@@ -13,9 +13,9 @@ public:
     bool OnInit() override;
     int OnExit() override;
 
-    Playlist* playlist= nullptr;
-    MediaController* controller = nullptr;
-    MainFrame* mainFrame = nullptr;
+    Playlist* playlist;
+    MediaController* controller ;
+    MainFrame* mainFrame ;
 
 };
 

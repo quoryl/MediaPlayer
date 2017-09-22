@@ -19,12 +19,12 @@ void MediaController::addFile(wxArrayString *paths) {
         auto tempList = playlist->getPlayList();
         for (auto i: *paths) {
             if (wxFileName(i).FileExists()) {
+                //necessary because of the library (TagLib)
                 auto metapath = static_cast<const char*>(i);
                 TagReader tags(metapath);
                 bool found = false;
                 if (tempList.empty()) {
-                    Song *song = new Song(tags.getTitle(), tags.getArtist(), tags.getAlbum(), 0, i);
-                    playlist->addToPlaylist(song); //to std::list
+                    playlist->addToPlaylist(new Song(tags.getTitle(), tags.getAlbumArt(), tags.getArtist(), tags.getAlbum(), 0, i, tags.getGenre())); //to std::list
 
                 } else {
 
@@ -34,13 +34,13 @@ void MediaController::addFile(wxArrayString *paths) {
                         }
                     }
                     if (!found) {
-                        Song *song = new Song(tags.getTitle(), tags.getArtist(), tags.getAlbum(), 0, i);
-                        playlist->addToPlaylist(song); //to std::list
+                        playlist->addToPlaylist(new Song(tags.getTitle(), tags.getAlbumArt(), tags.getArtist(), tags.getAlbum(), 0, i, tags.getGenre())); //to std::list
 
                     }
 
                 }
-            } else {
+            }
+            else {
                 std::cerr << "\nThe given file path: " << i << " is not valid" << std::endl;
             }
         }

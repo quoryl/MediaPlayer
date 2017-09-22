@@ -34,7 +34,7 @@ public:
     void shuffleList() override ;
     void prevSong() override ;
     void nextSong() override ;
-    void setLoop();
+    void setLoop() override;
     bool save() override;
     bool load() override;
     Song* getSongFromPlaylist(wxString path);

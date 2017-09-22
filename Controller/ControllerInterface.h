@@ -19,12 +19,12 @@ public:
     virtual void addFile(wxArrayString *paths) = 0;
     virtual void deleteSong(wxArrayString toDeletePath) = 0;
     virtual void shuffleList() = 0;
+    virtual void setLoop() = 0;
     virtual void prevSong() = 0;
     virtual void nextSong() = 0;
     virtual bool save() = 0;
     virtual bool load() = 0;
     virtual void tellPlaylist(wxString songPath) = 0;
-
 
 };
 

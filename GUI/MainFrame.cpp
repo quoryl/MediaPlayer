@@ -60,11 +60,8 @@ void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
         if( art!=nullptr )
             cmdSubSizer->Detach(art);
 
-        wxString albert = s->getSongPath();
-        auto charPath = static_cast<const char*>(albert);
-        TagReader tags(charPath);
         //The conversion was done because wxBitmap does not have a rescale method ( the difference with wxImage )
-        auto imageAlbum = tags.getAlbumArt().ConvertToImage();
+        auto imageAlbum = s->getAlbumArt().ConvertToImage();
         imageAlbum.Rescale(170,170);
         wxBitmap fromImage(imageAlbum);
 
@@ -72,10 +69,10 @@ void MainFrame::updateSongDetails(Song* s, Song* prevPlaying){
         cmdSubSizer->Prepend(art, 0, wxALL);
         MainSizer->Layout();
 
-        titleLabel->SetLabel(wxT("Title: ") + tags.getTitle());
-        artistLabel->SetLabel(wxT("Artist: ") + tags.getArtist());
-        albumLabel->SetLabel(wxT("Album: ") + tags.getAlbum());
-        genreLabel->SetLabel(wxT("Genre: ") + tags.getGenre());
+        titleLabel->SetLabel(wxT("Title: ") + s->getTitle());
+        artistLabel->SetLabel(wxT("Artist: ") + s->getArtist());
+        albumLabel->SetLabel(wxT("Album: ") + s->getAlbum());
+        genreLabel->SetLabel(wxT("Genre: ") + s->getGenre());
 
 
     }
@@ -497,7 +494,7 @@ void MainFrame::onPlay(wxCommandEvent &event) {
         Play->SetBitmap(playBitmap);
     }
     else //otherwise it will change the bitmap even if there aren't any playing songs
-        if(mediaCtrl->GetState() == wxMEDIASTATE_PAUSED){
+        {
             mediaCtrl->Play();
             Play->SetBitmap(pauseBitmap);
         }
